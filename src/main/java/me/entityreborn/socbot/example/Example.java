@@ -24,8 +24,10 @@
 package me.entityreborn.socbot.example;
 
 import me.entityreborn.socbot.api.SocBot;
+import me.entityreborn.socbot.api.events.JoinEvent;
 import me.entityreborn.socbot.api.events.LineSendEvent;
 import me.entityreborn.socbot.api.events.PacketReceivedEvent;
+import me.entityreborn.socbot.api.events.PartEvent;
 import me.entityreborn.socbot.api.events.PrivmsgEvent;
 import me.entityreborn.socbot.api.events.WelcomeEvent;
 import me.entityreborn.socbot.core.Core;
@@ -69,6 +71,18 @@ public class Example implements Listener {
     public void handleWelcomed(WelcomeEvent e) {
         SocBot bot = e.getBot();
         bot.join("#testing");
+    }
+    
+    @EventHandler
+    public void handleJoin(JoinEvent e) {
+        e.getChannel().sendMsg("Howdy!");
+    }
+    
+    @EventHandler
+    public void handlePart(PartEvent e) {
+        String them = e.getUser().getName();
+        
+        e.getChannel().sendMsg("Bye!");
     }
     
     @EventHandler

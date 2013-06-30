@@ -33,6 +33,11 @@ public class JoinEvent extends TargetedEvent {
         return handlers;
     }
     
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+    
     public Channel getChannel() {
         return channel;
     }
