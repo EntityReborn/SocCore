@@ -4,8 +4,6 @@
  */
 package me.entityreborn.socbot.api;
 
-import java.util.Set;
-
 /**
  *
  * @author Jason Unger <entityreborn@gmail.com>
@@ -36,13 +34,13 @@ public interface Target {
 
     public SocBot getBot();
 
-    public void sendMsg(String message);
+    public void sendMsg(String... message);
 
-    public void sendNotice(String message);
+    public void sendNotice(String... message);
 
-    public void sendCTCP(String type, String message);
+    public void sendCTCP(String type, String... message);
 
-    public void sendCTCPReply(String type, String message);
+    public void sendCTCPReply(String type, String... message);
     
     public void addModes(String modes);
     

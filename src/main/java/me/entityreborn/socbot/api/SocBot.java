@@ -80,4 +80,9 @@ public interface SocBot extends Connection {
      *
      */
     public void quit();
+    
+    public void join(String channel);
+    public void part(String channel);
+    public void join(String channel, String password);
+    public void part(String channel, String message);
 }

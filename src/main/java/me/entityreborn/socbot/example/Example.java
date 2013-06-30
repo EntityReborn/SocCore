@@ -23,9 +23,11 @@
  */
 package me.entityreborn.socbot.example;
 
+import me.entityreborn.socbot.api.SocBot;
 import me.entityreborn.socbot.api.events.LineSendEvent;
 import me.entityreborn.socbot.api.events.PacketReceivedEvent;
 import me.entityreborn.socbot.api.events.PrivmsgEvent;
+import me.entityreborn.socbot.api.events.WelcomeEvent;
 import me.entityreborn.socbot.core.Core;
 import me.entityreborn.socbot.events.EventHandler;
 import me.entityreborn.socbot.events.EventManager;
@@ -42,7 +44,7 @@ public class Example implements Listener {
         EventManager.registerEvents(new Example(), bot);
 
         bot.setNickname("Testing");
-        bot.connect("irc.freenode.net");
+        bot.connect("127.0.0.1");
     }
     
     public void debug(String s) {
@@ -57,6 +59,16 @@ public class Example implements Listener {
     @EventHandler
     public void handlePrivMsg(PrivmsgEvent e) {
         debug(e.getSender() + " said '" + e.getMessage() + "' to " + e.getTarget());
+        
+        if (e.getMessage().toLowerCase().startsWith("^ping")) {
+            e.getTarget().sendMsg("Pong!");
+        }
+    }
+    
+    @EventHandler
+    public void handleWelcomed(WelcomeEvent e) {
+        SocBot bot = e.getBot();
+        bot.join("#testing");
     }
     
     @EventHandler

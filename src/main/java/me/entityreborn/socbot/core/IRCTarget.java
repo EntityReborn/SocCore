@@ -51,20 +51,44 @@ public abstract class IRCTarget implements Target {
         return bot;
     }
 
-    public void sendMsg(String message) {
-        bot.sendLine("PRIVMSG " + getName() + " :" + message);
+    public void sendMsg(String... message) {
+        for (String msg : message) {
+            String[] parts = msg.split("\r?\n");
+            
+            for (String part : parts) {
+                bot.sendLine("PRIVMSG " + getName() + " :" + part);
+            }
+        }
     }
 
-    public void sendCTCP(String type, String message) {
-        sendMsg("\01" + type + " " + message + "\01");
+    public void sendCTCP(String type, String... message) {
+        for (String msg : message) {
+            String[] parts = msg.split("\r?\n");
+            
+            for (String part : parts) {
+                sendMsg("\01" + type + " " + part + "\01");
+            }
+        }
     }
 
-    public void sendNotice(String message) {
-        bot.sendLine("NOTICE " + getName() + " :" + message);
+    public void sendNotice(String... message) {
+        for (String msg : message) {
+            String[] parts = msg.split("\r?\n");
+            
+            for (String part : parts) {
+                bot.sendLine("NOTICE " + getName() + " :" + part);
+            }
+        }
     }
 
-    public void sendCTCPReply(String type, String message) {
-        sendNotice("\01" + type + " " + message + "\01");
+    public void sendCTCPReply(String type, String... message) {
+        for (String msg : message) {
+            String[] parts = msg.split("\r?\n");
+            
+            for (String part : parts) {
+                sendNotice("\01" + type + " " + part + "\01");
+            }
+        }
     }
 
     public void addModes(String m) {

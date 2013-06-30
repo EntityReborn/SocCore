@@ -315,4 +315,20 @@ public class Core extends Engine implements SocBot, Listener {
     public Set<Channel> getChannels() {
         return userChannelMap.getChannels();
     }
+
+    public void join(String channel) {
+        sendLine("JOIN " + channel);
+    }
+    
+    public void join(String channel, String pass) {
+        sendLine("JOIN " + channel + " :" + pass);
+    }
+
+    public void part(String channel) {
+        sendLine("PART " + channel);
+    }
+    
+    public void part(String channel, String message) {
+        sendLine("PART " + channel + " :" + message);
+    }
 }

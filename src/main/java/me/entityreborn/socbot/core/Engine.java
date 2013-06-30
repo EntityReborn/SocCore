@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import javax.net.SocketFactory;
-import me.entityreborn.socbot.api.Numerics;
 import me.entityreborn.socbot.api.events.ConnectedEvent;
 import me.entityreborn.socbot.api.events.ConnectingEvent;
 import me.entityreborn.socbot.api.events.LineSendEvent;

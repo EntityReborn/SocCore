@@ -81,7 +81,7 @@ public class OutputThread extends Thread {
                     sendNow(line);
                 }
 
-                Thread.sleep(1000);
+                Thread.sleep(250);
             } catch (InterruptedException ex) {
                 return;
             }
