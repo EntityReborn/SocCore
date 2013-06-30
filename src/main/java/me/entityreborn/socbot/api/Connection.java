@@ -31,35 +31,129 @@ import javax.net.SocketFactory;
  */
 public interface Connection {
 
+    /**
+     * Connect the bot to a given server. <p> The server will connect to port
+     * 6667 by default.
+     *
+     * @param srvr server to connect to
+     */
     public void connect(String server);
 
+    /**
+     * Connect the bot to a given server and port.
+     *
+     * @param srvr server to connect to
+     * @param prt port to connect to
+     */
     public void connect(String server, int port);
 
+    /**
+     * Connect the bot to a given server and port, providing a server password.
+     *
+     * @param server server to connect to
+     * @param port port to connect to
+     * @param password password to use during registration
+     */
     public void connect(String server, int port, String password);
-    
+
+    /**
+     * Connect the bot to a given server and port, providing a server password
+     * and socketfactory.
+     *
+     * @param server server to connect to
+     * @param port port to connect to
+     * @param password password to use during registration
+     * @param factory socketfactory to use to provide sockets
+     */
     public void connect(String server, int port, String password, SocketFactory factory);
 
+    /**
+     * Forcefully shut down everything and return the bot into a disconnected
+     * state.
+     */
     public void disconnect();
 
+    /**
+     * Get the nickname used while registering.
+     *
+     * @return the nickname
+     */
     public String getNickname();
 
+    /**
+     * Get the realname used while registering.
+     *
+     * @return the realname
+     */
     public String getRealname();
 
+    /**
+     * Get the username used while registering.
+     *
+     * @return the username
+     */
     public String getUsername();
 
+    /**
+     * Check if a full connection has been established.
+     *
+     * @return true if we are fully connected.
+     */
     public boolean isConnected();
-    
+
+    /**
+     * Check if we are attempting to connect, and haven't established a full
+     * connection yet.
+     *
+     * @return true if we are still connecting.
+     */
     public boolean isConnecting();
 
+    /**
+     * Send a line to the server.
+     *
+     * @param line
+     */
     public void sendLine(String line);
 
+    /**
+     * Send a line now, overriding any output queue or throttling.
+     *
+     * @param line line to send.
+     */
     public void sendLineNow(String line);
-    
+
+    /**
+     * Send a PING to the server. <p> Uses the current time in millis as the
+     * ping message.
+     */
     public void sendPing();
 
+    /**
+     * Set the nickname to use during the registration process. <p> Will fail
+     * silently if we have registered already, as it would be pointless
+     * otherwise. If we are still in the registration phase (ie if we got an
+     * nickname in use error), it will send a NICK line to the server as well.
+     *
+     * @param nickname the nickname to set
+     */
     public void setNickname(String nickname);
 
+    /**
+     * Set the realname to use during the registration process. <p> Will fail
+     * silently if we have registered already, as it would be pointless
+     * otherwise.
+     *
+     * @param realname the realname to set
+     */
     public void setRealname(String realname);
 
+    /**
+     * Set the username to use during the registration process. <p> Will fail
+     * silently if we have registered already, as it would be pointless
+     * otherwise.
+     *
+     * @param username the username to set
+     */
     public void setUsername(String username);
 }

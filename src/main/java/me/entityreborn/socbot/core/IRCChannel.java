@@ -57,14 +57,28 @@ public class IRCChannel extends IRCTarget implements Channel {
     }
     
     public void addUserMode(User user, String mode) {
-        if (userModes.containsKey(user) && !userModes.get(user).contains(mode)) {
-            userModes.put(user, userModes.get(user) + mode);
+        if (!userModes.containsKey(user)) {
+            return;
+        }
+        
+        for (char c : mode.toCharArray()) {
+            String m = Character.toString(c);
+            
+            if (!userModes.get(user).contains(m)) {
+                userModes.put(user, userModes.get(user) + m);
+            }
         }
     }
 
     public void remUserMode(User user, String mode) {
-        if (userModes.containsKey(user) && userModes.get(user).contains(mode)) {
-            userModes.put(user, userModes.get(user).replace(mode, ""));
+        if (!userModes.containsKey(user)) {
+            return;
+        }
+        
+        for (char c : mode.toCharArray()) {
+            String m = Character.toString(c);
+            
+            userModes.put(user, userModes.get(user).replace(m, ""));
         }
     }
     

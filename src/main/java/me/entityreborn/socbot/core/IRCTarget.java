@@ -69,7 +69,7 @@ public abstract class IRCTarget implements Target {
 
     public void addModes(String m) {
         for (char c : m.toCharArray()) {
-            if (!modes.contains(new Character(c).toString())) {
+            if (!modes.contains(Character.toString(c))) {
                 modes += c;
             }
         }
@@ -77,7 +77,7 @@ public abstract class IRCTarget implements Target {
 
     public void removeModes(String m) {
         for (char c : m.toCharArray()) {
-            modes = modes.replace(new Character(c).toString(), "");
+            modes = modes.replace(Character.toString(c), "");
         }
     }
 

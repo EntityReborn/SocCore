@@ -29,13 +29,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import javax.net.SocketFactory;
+import me.entityreborn.socbot.api.Numerics;
 import me.entityreborn.socbot.api.events.ConnectedEvent;
 import me.entityreborn.socbot.api.events.ConnectingEvent;
 import me.entityreborn.socbot.api.events.LineSendEvent;
 
 /**
- * Provide low level connection and lifetime management for an IRC session.
- *
+ * Provide low level connection and lifetime management for an IRC session. <p>
  * Some of the /ideas/ behind how this works taken from PircBotX. No actual
  * PircBotX code used.
  *
@@ -54,12 +54,16 @@ public abstract class Engine implements Connection {
     private boolean isConnecting = false;
     private static int enginecount = 1;
 
+    /**
+     * Increment and return a counter for use in naming threads.
+     *
+     * @return id number
+     */
     protected static int getCountAndIncrement() {
         return enginecount++;
     }
 
     public void disconnect() {
-        // Shut down *everything*
         isConnected = false;
 
         try {
@@ -80,40 +84,41 @@ public abstract class Engine implements Connection {
         }
     }
 
-    public void connect(String server) {
-        connect(server, 6667, null, null);
+    public void connect(String srvr) {
+        connect(srvr, 6667, "", null);
     }
 
     public void connect(String server, int port) {
-        connect(server, port, null, null);
+        connect(server, port, "", null);
     }
 
     public void connect(String server, int port, String password) {
-        connect(server, port, password, null);
+        connect(server, port, password, sockfactory);
     }
 
     public void connect(String server, int port, String password, SocketFactory factory) {
         sockfactory = factory;
+
         isConnecting = true;
         sock = null;
-        
+
         EventManager.callEvent(new ConnectingEvent(server, port), this);
-        
+
         try {
-            for (InetAddress addr : InetAddress.getAllByName(server)) {
-                try {
-                    if (factory != null) {
+            if (factory != null) {
+                for (InetAddress addr : InetAddress.getAllByName(server)) {
+                    try {
                         sock = sockfactory.createSocket(server, port, addr, 0);
-                    } else {
-                        sock = new Socket(server, port, addr, 0);
+
+                        break;
+                    } catch (Throwable t) {
+                        handleException(t);
                     }
-                    
-                    break;
-                } catch (Throwable t) {
-                    handleException(t);
                 }
+            } else {
+                sock = new Socket(server, port, null, 0);
             }
-            
+
             if (sock == null) {
                 throw new RuntimeException("Could not connect to a server.");
             }
@@ -124,20 +129,20 @@ public abstract class Engine implements Connection {
             int count = getCountAndIncrement();
             in.setName("input-" + count);
             out.setName("output-" + count);
-            
+
             out.start();
-            
+
             EventManager.callEvent(new ConnectedEvent(server, port), this);
-            
+
             if (password != null && !password.trim().equals("")) {
                 sendLine("PASS " + password.trim());
             }
 
             sendLine("NICK " + getNickname());
             sendLine("USER " + getUsername() + " 8 * :" + getRealname());
-            
+
             in.start();
-            
+
             isConnecting = false;
             isConnected = true;
         } catch (Throwable t) {
@@ -145,9 +150,28 @@ public abstract class Engine implements Connection {
         }
     }
 
+    /**
+     * Exception callback for when something bad happens in the core.
+     * <p>
+     * This doesn't pertain to error numerics or the ERROR IRC message
+     * sent from the server.
+     * 
+     * @param t the exception that was thrown.
+     */
     public abstract void handleException(Throwable t);
 
+    /**
+     * Handle any input the bot receives.
+     * <p>
+     * This method will fire off appropriate events,
+     * depending on the type of line.
+     * <p>
+     * Numeric lines will be sent to handleNumeric.
+     * 
+     * @param line the line the bot received.
+     */
     public abstract void handleLine(String line);
+
 
     public void sendLine(String line) {
         EventManager.callEvent(new LineSendEvent(line), this);
@@ -158,6 +182,7 @@ public abstract class Engine implements Connection {
         EventManager.callEvent(new LineSendEvent(line, true), this);
         out.sendNow(line);
     }
+
 
     public void sendPing() {
         sendLine("PING " + (System.currentTimeMillis() / 1000));
@@ -171,50 +196,34 @@ public abstract class Engine implements Connection {
         return isConnecting;
     }
 
-    /**
-     * @return the nickname
-     */
     public String getNickname() {
         return nickname;
     }
 
-    /**
-     * @param nickname the nickname to set
-     */
+
     public void setNickname(String nickname) {
         if (isConnected() || isConnecting()) {
             sendLine("NICK " + nickname);
-        } else {
-            this.nickname = nickname;
         }
+        
+        this.nickname = nickname;
     }
 
-    /**
-     * @return the username
-     */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @param username the username to set
-     */
+
     public void setUsername(String username) {
         if (!isConnected()) {
             this.username = username;
         }
     }
 
-    /**
-     * @return the realname
-     */
     public String getRealname() {
         return realname;
     }
 
-    /**
-     * @param realname the realname to set
-     */
     public void setRealname(String realname) {
         if (!isConnected()) {
             this.realname = realname;

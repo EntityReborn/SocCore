@@ -30,7 +30,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.SocketFactory;
-import me.entityreborn.socbot.api.config.ServerConfig;
 import me.entityreborn.socbot.core.Core;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +67,6 @@ public class TestUtils {
         sent = new ArrayList<String>();
 
         bot.setNickname(conf.getNick());
-        bot.setConfig(conf);
 
         sock = mock(Socket.class);
         when(sock.isConnected()).thenReturn(true);
@@ -95,7 +93,7 @@ public class TestUtils {
     }
     
     
-    public static class Config implements ServerConfig {
+    public static class Config{
 
         public String getNick() {
             return "Test";

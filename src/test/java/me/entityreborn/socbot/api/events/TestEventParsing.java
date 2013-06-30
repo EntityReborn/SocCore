@@ -27,8 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PreDestroy;
-import me.entityreborn.socbot.api.Numerics;
 import me.entityreborn.socbot.api.Numerics.Numeric;
 import me.entityreborn.socbot.core.Core;
 import me.entityreborn.socbot.events.EventHandler;
@@ -93,8 +91,7 @@ public class TestEventParsing implements Listener {
 
     @Test
     public void testModeChange() {
-        bot.handleLine(":localhost MODE " + conf.getNick()
-                + " +i");
+        bot.handleLine(":localhost MODE " + conf.getNick() + " +i");
 
         assertTrue(event instanceof ModeChangeEvent);
         ModeChangeEvent we = (ModeChangeEvent) event;
@@ -109,7 +106,7 @@ public class TestEventParsing implements Listener {
         
         after();
         
-        bot.handleLine(":localhost MODE #testing +o " + conf.getNick());
+        bot.handleLine(":localhost MODE #testing +o");
 
         assertTrue(event instanceof ModeChangeEvent);
         we = (ModeChangeEvent) event;
@@ -121,6 +118,23 @@ public class TestEventParsing implements Listener {
         assertTrue(we.getAddedModes().contains("o"));
 
         assertTrue(we.getRemovedModes().isEmpty());
+        
+        after();
+        
+        bot.handleLine(":" + conf.getNick() + "!test@test.com JOIN :#testing");
+        bot.handleLine(":localhost MODE #testing +o " + conf.getNick());
+
+        assertTrue(event instanceof ChannelUserModeChangeEvent);
+        ChannelUserModeChangeEvent e = (ChannelUserModeChangeEvent) event;
+
+        assertEquals(e.getSender().getName(), "localhost");
+        assertEquals(e.getChannel().getName(), "#testing");
+
+        assertEquals(e.getAddedModes().size(), 1);
+        assertTrue(e.getChannel().getUserModes().containsKey(bot.getUser(conf.getNick())));
+        assertTrue(e.getChannel().getUserModes(bot.getUser(conf.getNick())).contains("o"));
+
+        assertTrue(e.getRemovedModes().isEmpty());
     }
 
     @Test

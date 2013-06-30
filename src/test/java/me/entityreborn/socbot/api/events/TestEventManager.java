@@ -56,13 +56,13 @@ public class TestEventManager implements Listener {
 
     @Test
     public void testManager() throws Exception {
-        EventManager.registerEvents(this, this);
-
         TestUtils.Config conf = new TestUtils.Config();
         ByteArrayInputStream input = new ByteArrayInputStream("".getBytes());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Core bot = TestUtils.init(input, output, conf);
-
+        
+        EventManager.registerEvents(this, bot);
+        
         cleanup();
         bot.handleLine(":localhost 001 " + conf.getNick()
                 + " :Welcome to the LocalHost IRC Network "

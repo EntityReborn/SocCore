@@ -26,46 +26,33 @@ package me.entityreborn.socbot.core;
 import me.entityreborn.socbot.events.EventManager;
 import me.entityreborn.socbot.events.Listener;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.SocBot;
-import me.entityreborn.socbot.api.config.ServerConfig;
 import me.entityreborn.socbot.api.Numerics.Numeric;
 import me.entityreborn.socbot.api.ServerInfo;
 import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
-import me.entityreborn.socbot.api.events.AbstractEvent;
-import me.entityreborn.socbot.api.events.CTCPEvent;
-import me.entityreborn.socbot.api.events.CTCPReplyEvent;
-import me.entityreborn.socbot.api.events.JoinEvent;
-import me.entityreborn.socbot.api.events.KickEvent;
-import me.entityreborn.socbot.api.events.NickEvent;
-import me.entityreborn.socbot.api.events.NoticeEvent;
-import me.entityreborn.socbot.api.events.NumericEvent;
-import me.entityreborn.socbot.api.events.PacketReceivedEvent;
-import me.entityreborn.socbot.api.events.PartEvent;
-import me.entityreborn.socbot.api.events.PrivmsgEvent;
-import me.entityreborn.socbot.api.events.QuitEvent;
-import me.entityreborn.socbot.api.events.TargetedEvent;
-import me.entityreborn.socbot.api.events.ModeChangeEvent;
-import me.entityreborn.socbot.api.events.WelcomeEvent;
+import me.entityreborn.socbot.api.UserChannelMap;
+import me.entityreborn.socbot.api.events.*;
 
 /**
+ * Implementation for non-connection-specific type stuff. Subclasses for the bot
+ * should subclass this class.
  *
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class Core extends Engine implements SocBot, Listener {
 
     static String VERSION = "";
-    ServerConfig config;
-    IRCUserChannelMap userChannelMap;
+    UserChannelMap userChannelMap;
     Map<String, User> userMap;
     Map<String, Channel> channelMap;
-    IRCServerInfo serverInfo;
+    ServerInfo serverInfo;
 
     static {
+        // Get the compiled version info from the manifest.
         Package p = Core.class.getPackage();
         String v = null;
 
@@ -77,6 +64,8 @@ public class Core extends Engine implements SocBot, Listener {
             v = p.getImplementationVersion();
         }
 
+        // We're probably running from class files,
+        // or something messed up.
         if (v == null) {
             v = "(unknown)";
         }
@@ -84,6 +73,9 @@ public class Core extends Engine implements SocBot, Listener {
         VERSION = v;
     }
 
+    /**
+     * Create a new instance of Core
+     */
     public Core() {
         userChannelMap = new IRCUserChannelMap();
         userMap = new HashMap<String, User>();
@@ -131,21 +123,18 @@ public class Core extends Engine implements SocBot, Listener {
 
         if (!userMap.containsKey(nick.toLowerCase())) {
             User u = new IRCUser(nick, this);
-            u.setHostmask(host);
-
             userMap.put(nick.toLowerCase(), u);
         }
 
-        return userMap.get(nick.toLowerCase());
-    }
+        User u = userMap.get(nick.toLowerCase());
 
-    public void setConfig(ServerConfig conf) {
-        this.config = conf;
-    }
+        //Update the hostmask if we are given it.
+        if (!host.isEmpty()) {
+            u.setHostmask(host);
+        }
+        //TODO: Arrays.asList(host.split("")));
 
-    @Override
-    public ServerConfig getBaseConfig() {
-        return config;
+        return u;
     }
 
     @Override
@@ -178,28 +167,28 @@ public class Core extends Engine implements SocBot, Listener {
 
             userChannelMap.add(packet.getSender(), jn.getChannel());
             jn.getChannel().trackUser(packet.getSender());
-            
+
             evt = jn;
         } else if (command.equals("PART")) {
             PartEvent pt = new PartEvent(packet);
             Channel chan = pt.getChannel();
             chan.untrackUser(packet.getSender());
-            
+
             if (packet.getSender().getName().equals(getNickname())) {
                 userChannelMap.removeAllMappingsForChannel(chan);
             } else {
                 userChannelMap.remove(packet.getSender(), chan);
             }
-            
+
             evt = pt;
         } else if (command.equals("KICK")) {
             KickEvent ke = new KickEvent(packet);
             Set<Channel> chans = userChannelMap.getChannels(ke.getKicked());
-            
-            for (Channel chan: chans) {
+
+            for (Channel chan : chans) {
                 chan.untrackUser(ke.getKicked());
             }
-            
+
             if (packet.getSender().getName().equals(getNickname())) {
                 userChannelMap.removeAllMappingsForChannel(ke.getChannel());
             } else {
@@ -210,8 +199,8 @@ public class Core extends Engine implements SocBot, Listener {
         } else if (command.equals("QUIT")) {
             QuitEvent qt = new QuitEvent(packet);
             Set<Channel> chans = userChannelMap.getChannels(qt.getUser());
-            
-            for (Channel chan: chans) {
+
+            for (Channel chan : chans) {
                 chan.untrackUser(qt.getUser());
             }
 
@@ -241,36 +230,28 @@ public class Core extends Engine implements SocBot, Listener {
 
             evt = ne;
         } else if (command.equals("MODE")) {
-            ModeChangeEvent mce = new ModeChangeEvent(packet);
-            Target tgt = mce.getTarget();
-            List<String> args = mce.getPacket().getArgs();
-            
-            if (tgt instanceof IRCChannel && !args.isEmpty()) {
-                Channel chan = (IRCChannel)tgt;
-                String modelist = args.remove(0);
-                boolean add = true;
-                
-                for (char c: modelist.toCharArray()) {
-                    if (c == '+') {
-                        add = true; 
-                    } else if (c == '-') {
-                        add = false;
-                    } else {
-                        User user = getUser(args.remove(0));
-                        
-                        if (add) {
-                            chan.addUserMode(user, Character.toString(c));
-                        } else {
-                            chan.remUserMode(user, Character.toString(c));
-                        }
-                    }
+            if (packet.getArgs().size() > 2) {
+                ChannelUserModeChangeEvent cumce = new ChannelUserModeChangeEvent(packet);
+                Channel chan = (Channel) cumce.getTarget();
+
+                for (Map.Entry<User, String> entry : cumce.getAddedModes().entrySet()) {
+                    chan.addUserMode(entry.getKey(), entry.getValue());
                 }
+
+                for (Map.Entry<User, String> entry : cumce.getRemovedModes().entrySet()) {
+                    chan.remUserMode(entry.getKey(), entry.getValue());
+                }
+
+                evt = cumce;
             } else {
+                ModeChangeEvent mce = new ModeChangeEvent(packet);
+                Target tgt = mce.getTarget();
+
                 tgt.addModes(mce.getAddedModes());
                 tgt.removeModes(mce.getRemovedModes());
-            }
 
-            evt = mce;
+                evt = mce;
+            }
         }
 
         if (evt != null) {
@@ -278,6 +259,12 @@ public class Core extends Engine implements SocBot, Listener {
         }
     }
 
+    /**
+     * Handle a {@link Numeric} packet that the bot received.
+     *
+     * @param packet the parsed numeric packet.
+     * @return an {@link AbstractEvent} to be fired.
+     */
     protected AbstractEvent handleNumeric(IRCPacket packet) {
         Numeric numeric = packet.getNumeric();
 
@@ -317,7 +304,7 @@ public class Core extends Engine implements SocBot, Listener {
         quit("");
     }
 
-    public IRCUserChannelMap getUserChannelMap() {
+    public UserChannelMap getUserChannelMap() {
         return userChannelMap;
     }
 
