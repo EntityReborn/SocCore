@@ -96,7 +96,7 @@ public class TestUtils {
     public static class Config{
 
         public String getNick() {
-            return "Test";
+            return "tester";
         }
 
         public int getPort() {

@@ -22,7 +22,7 @@ public class PartEvent extends TargetedEvent {
         super(p);
         
         channel = (Channel)getTarget();
-        user = p.getSender();
+        user = getBot().getUser(p.getSender());
     }
 
     public static HandlerList getHandlerList() {

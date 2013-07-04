@@ -42,9 +42,5 @@ public interface Target {
 
     public void sendCTCPReply(String type, String... message);
     
-    public void addModes(String modes);
-    
-    public void removeModes(String modes);
-    
     public String getModes();
 }

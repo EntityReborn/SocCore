@@ -25,13 +25,11 @@ package me.entityreborn.socbot.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import me.entityreborn.socbot.api.Numerics;
 import me.entityreborn.socbot.api.Numerics.Numeric;
 import me.entityreborn.socbot.api.Packet;
 import me.entityreborn.socbot.api.SocBot;
-import me.entityreborn.socbot.api.User;
 
 /**
  *
@@ -39,8 +37,7 @@ import me.entityreborn.socbot.api.User;
  */
 public class IRCPacket implements Packet {
     private String originalLine;
-    private String senderLine;
-    private User sender;
+    private String sender;
     private String message = "";
     private List<String> args;
     private String command;
@@ -64,8 +61,7 @@ public class IRCPacket implements Packet {
         // Get sender if given
         if (line.startsWith(":")) {
             String[] split = line.split(" ", 2);
-            senderLine = split[0].substring(1);
-            sender = bot.getUser(senderLine);
+            sender = split[0].substring(1);
             line = split[1];
         }
         
@@ -99,7 +95,7 @@ public class IRCPacket implements Packet {
         return originalLine;
     }
     
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
     
@@ -122,7 +118,7 @@ public class IRCPacket implements Packet {
         return numeric;
     }
     
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
     

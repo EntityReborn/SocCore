@@ -15,12 +15,12 @@ import me.entityreborn.socbot.events.HandlerList;
 public class WelcomeEvent extends TargetedEvent {
 
     private static final HandlerList handlers = new HandlerList(TargetedEvent.getHandlerList());
-    private User user;
+    private String srvName;
     
     public WelcomeEvent(Packet p) {
         super(p);
 
-        user = p.getSender();
+        srvName = p.getSender();
     }
 
     public static HandlerList getHandlerList() {
@@ -33,6 +33,6 @@ public class WelcomeEvent extends TargetedEvent {
     }
 
     public String getServerName() {
-        return user.getName();
+        return srvName;
     }
 }

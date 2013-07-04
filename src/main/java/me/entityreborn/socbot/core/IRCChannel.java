@@ -28,12 +28,13 @@ import java.util.Map;
 import java.util.Set;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.User;
+import me.entityreborn.socbot.events.Listener;
 
 /**
  *
  * @author Jason Unger <entityreborn@gmail.com>
  */
-public class IRCChannel extends IRCTarget implements Channel {
+public class IRCChannel extends IRCTarget implements Channel, Listener {
     String name;
     String topic = "";
     Map<User, String> userModes = new HashMap<User, String>();

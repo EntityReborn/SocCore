@@ -17,8 +17,4 @@ public interface User extends Target {
     public String getLastNick();
 
     public Set<Channel> getChannels();
-
-    public void setName(String n);
-
-    public void setHostmask(String h);
 }

@@ -23,16 +23,16 @@
  */
 package me.entityreborn.socbot.core;
 
-import java.util.HashSet;
 import java.util.Set;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.User;
+import me.entityreborn.socbot.events.Listener;
 
 /**
  *
  * @author Jason Unger <entityreborn@gmail.com>
  */
-public class IRCUser extends IRCTarget implements User {
+public class IRCUser extends IRCTarget implements User, Listener {
 
     private String nick;
     private String lastNick;

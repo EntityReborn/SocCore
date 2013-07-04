@@ -43,4 +43,8 @@ public interface ServerInfo {
     public boolean hasMOTD();
 
     public List<String> getMOTD();
+    
+    public boolean isPrefixed(String nick);
+    
+    public String getModeByPrefix(String prefix);
 }

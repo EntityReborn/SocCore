@@ -51,24 +51,6 @@ public interface Channel extends Target {
     public String getUserModes(User user);
 
     /**
-     * Add one or more user modes to a {@link User} in this channel. The mode
-     * string can contain more than one character.
-     *
-     * @param user the user to modify.
-     * @param mode the mode(s) to add.
-     */
-    public void addUserMode(User user, String mode);
-
-    /**
-     * Remove one or more user modes from a {@link User} in this channel. The mode
-     * string can contain more than one character.
-     *
-     * @param user the user to modify.
-     * @param mode the mode(s) to remove.
-     */
-    public void remUserMode(User user, String mode);
-
-    /**
      * Test to see if a given user has a given mode.
      * {@code mode} is expected to be a single character.
      * @param user
@@ -76,8 +58,4 @@ public interface Channel extends Target {
      * @return
      */
     public boolean userHasMode(User user, String mode);
-
-    public void trackUser(User user);
-
-    public void untrackUser(User user);
 }

@@ -13,28 +13,28 @@ import me.entityreborn.socbot.api.Numerics.Numeric;
  */
 public interface Packet {
     
-    SocBot getBot();
+    public SocBot getBot();
 
-    List<String> getArgs();
+    public List<String> getArgs();
 
-    String getCommand();
+    public String getCommand();
 
-    String getMessage();
+    public String getMessage();
 
-    Numeric getNumeric();
+    public Numeric getNumeric();
 
-    String getOriginalLine();
+    public String getOriginalLine();
 
-    User getSender();
+    public String getSender();
 
-    void setArgs(List<String> args);
+    public void setArgs(List<String> args);
 
-    void setCommand(String command);
+    public void setCommand(String command);
 
-    void setMessage(String message);
+    public void setMessage(String message);
 
-    void setNumeric(Numeric numeric);
+    public void setNumeric(Numeric numeric);
 
-    void setSender(User sender);
+    public void setSender(String sender);
     
 }

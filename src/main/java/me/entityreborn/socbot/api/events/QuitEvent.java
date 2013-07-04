@@ -38,7 +38,7 @@ public class QuitEvent extends AbstractPacketEvent {
     public QuitEvent(Packet p) {
         super(p);
         
-        user = p.getSender();
+        user = getBot().getUser(p.getSender());
     }
 
     public static HandlerList getHandlerList() {

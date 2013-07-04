@@ -95,7 +95,7 @@ public class TestEventManager implements Listener {
                         + botname + "!SocPuppet@localhost.com");
                 assertEquals(p.getCommand(), Numeric.RPL_WELCOME.name());
                 assertEquals(p.getNumeric(), Numeric.RPL_WELCOME);
-                assertEquals(p.getSender().getName(), "localhost");
+                assertEquals(p.getSender(), "localhost");
                 assertEquals(p.getMessage(), "Welcome to the LocalHost IRC Network "
                         + botname + "!SocPuppet@localhost.com");
                 

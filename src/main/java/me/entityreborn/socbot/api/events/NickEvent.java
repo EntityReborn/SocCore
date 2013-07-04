@@ -23,7 +23,7 @@ public class NickEvent extends TargetedEvent {
     }
     
     public String getOldNick() {
-        return packet.getSender().getName();
+        return packet.getSender();
     }
     
     @Override

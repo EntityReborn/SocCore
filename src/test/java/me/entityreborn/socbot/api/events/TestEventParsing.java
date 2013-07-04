@@ -27,7 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.Numerics.Numeric;
+import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.core.Core;
 import me.entityreborn.socbot.events.EventHandler;
 import me.entityreborn.socbot.events.EventManager;
@@ -91,12 +93,13 @@ public class TestEventParsing implements Listener {
 
     @Test
     public void testModeChange() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":localhost MODE " + conf.getNick() + " +i");
 
         assertTrue(event instanceof ModeChangeEvent);
         ModeChangeEvent we = (ModeChangeEvent) event;
 
-        assertEquals(we.getSender().getName(), "localhost");
+        assertEquals(we.getSender(), "localhost");
         assertEquals(we.getTarget().getName(), conf.getNick());
 
         assertEquals(we.getAddedModes().length(), 1);
@@ -111,7 +114,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof ModeChangeEvent);
         we = (ModeChangeEvent) event;
 
-        assertEquals(we.getSender().getName(), "localhost");
+        assertEquals(we.getSender(), "localhost");
         assertEquals(we.getTarget().getName(), "#testing");
 
         assertEquals(we.getAddedModes().length(), 1);
@@ -127,7 +130,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof ChannelUserModeChangeEvent);
         ChannelUserModeChangeEvent e = (ChannelUserModeChangeEvent) event;
 
-        assertEquals(e.getSender().getName(), "localhost");
+        assertEquals(e.getSender(), "localhost");
         assertEquals(e.getChannel().getName(), "#testing");
 
         assertEquals(e.getAddedModes().size(), 1);
@@ -139,18 +142,20 @@ public class TestEventParsing implements Listener {
 
     @Test
     public void testNotice() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":tester!test@test.com NOTICE #testing :Test!");
 
         assertTrue(event instanceof NoticeEvent);
         NoticeEvent e = (NoticeEvent) event;
 
         assertEquals(e.getMessage(), "Test!");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
     @Test
     public void testCTCPReply() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":tester!test@test.com NOTICE #testing :\01PING Test!\01");
 
         assertTrue(event instanceof CTCPReplyEvent);
@@ -158,24 +163,26 @@ public class TestEventParsing implements Listener {
 
         assertEquals(e.getMessage(), "Test!");
         assertEquals(e.getType(), "PING");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
     @Test
     public void testPrivmsg() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":tester!test@test.com PRIVMSG #testing :Test!");
 
         assertTrue(event instanceof PrivmsgEvent);
         PrivmsgEvent e = (PrivmsgEvent) event;
 
         assertEquals(e.getMessage(), "Test!");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
     @Test
     public void testCTCP() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":tester!test@test.com PRIVMSG #testing :\01ACTION Test!\01");
 
         assertTrue(event instanceof CTCPEvent);
@@ -183,7 +190,7 @@ public class TestEventParsing implements Listener {
 
         assertEquals(e.getMessage(), "Test!");
         assertEquals(e.getType(), "ACTION");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
@@ -196,7 +203,7 @@ public class TestEventParsing implements Listener {
         JoinEvent e = (JoinEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
 
         // Test it with the channel given as an arg
         bot.handleLine(":tester!test@test.com JOIN #testing");
@@ -205,11 +212,12 @@ public class TestEventParsing implements Listener {
         e = (JoinEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
     }
 
     @Test
     public void testPart() {
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         // Test it with message
         bot.handleLine(":tester!test@test.com PART #testing :Bye!");
 
@@ -217,7 +225,7 @@ public class TestEventParsing implements Listener {
         PartEvent e = (PartEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getPartMessage(), "Bye!");
 
         // Test it without message
@@ -227,7 +235,7 @@ public class TestEventParsing implements Listener {
         e = (PartEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
         assertEquals(e.getPartMessage(), "");
     }
 
@@ -239,7 +247,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof QuitEvent);
         QuitEvent e = (QuitEvent) event;
 
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(e.getUser().getName(), "tester");
         assertEquals(e.getQuitMessage(), "Bye!");
 
         // Test it without message
@@ -248,7 +256,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof QuitEvent);
         e = (QuitEvent) event;
 
-        assertEquals(e.getSender().getName(), "tester");
+        assertEquals(e.getUser().getName(), "tester");
         assertEquals(e.getQuitMessage(), "");
     }
 
@@ -260,20 +268,44 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof KickEvent);
         KickEvent e = (KickEvent) event;
 
-        assertEquals(e.getSender().getName(), "kicker");
+        assertEquals(bot.getUser(e.getSender()).getName(), "kicker");
         assertEquals(e.getChannel().getName(), "#testing");
         assertEquals(e.getKicked().getName(), "kickee");
         assertEquals(e.getKickMessage(), "Bye!");
 
         // Test it without message
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":kicker!test@test.com KICK #testing kickee");
 
         assertTrue(event instanceof KickEvent);
         e = (KickEvent) event;
 
-        assertEquals(e.getSender().getName(), "kicker");
+        assertEquals(bot.getUser(e.getSender()).getName(), "kicker");
         assertEquals(e.getChannel().getName(), "#testing");
         assertEquals(e.getKicked().getName(), "kickee");
         assertEquals(e.getKickMessage(), "");
+    }
+    
+    @Test
+    public void testNamList() {
+        // Test it with message
+        bot.handleLine(":localhost 005 Testing PREFIX=(qaohv)~&@%+ :are supported by this server");
+        bot.handleLine(":Testing!test@test.com JOIN :#testing");
+        bot.handleLine(":localhost 353 Testing = #testing :Testing @__import__");
+
+        assertTrue(event instanceof NumericEvent);
+        NumericEvent e = (NumericEvent) event;
+        
+        assertEquals(e.getNumeric(), Numeric.RPL_NAMREPLY);
+        assertEquals(e.getSender(), "localhost");
+        assertEquals(e.getTarget().getName(), "Testing");
+        
+        List<String> args = e.getPacket().getArgs();
+        
+        Channel chan = bot.getChannel(args.get(args.size() - 1), true);
+        User u = bot.getUser("__import__", true);
+        
+        assertTrue(chan.getUserModes().containsKey(u));
+        assertTrue(chan.getUserModes(u).contains("o"));
     }
 }

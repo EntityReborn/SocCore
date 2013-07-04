@@ -23,7 +23,9 @@
  */
 package me.entityreborn.socbot.example;
 
+import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.SocBot;
+import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.api.events.JoinEvent;
 import me.entityreborn.socbot.api.events.LineSendEvent;
 import me.entityreborn.socbot.api.events.PacketReceivedEvent;
@@ -60,10 +62,16 @@ public class Example implements Listener {
     
     @EventHandler
     public void handlePrivMsg(PrivmsgEvent e) {
-        debug(e.getSender() + " said '" + e.getMessage() + "' to " + e.getTarget());
+        debug(e.getUser().getName() + " said '" + e.getMessage() + "' to " + e.getTarget());
         
         if (e.getMessage().toLowerCase().startsWith("^ping")) {
             e.getTarget().sendMsg("Pong!");
+        } else if (e.getMessage().toLowerCase().startsWith("^data")) {
+            Channel chan = (Channel)e.getTarget();
+            
+            for (User user : chan.getUsers()) {
+                e.getTarget().sendMsg(user.getName() + " " + chan.getUserModes(user));
+            }
         }
     }
     

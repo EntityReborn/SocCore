@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.entityreborn.socbot.api.ServerInfo;
+import me.entityreborn.socbot.api.SocBot;
 import me.entityreborn.socbot.api.events.NumericEvent;
 import me.entityreborn.socbot.events.EventHandler;
 import me.entityreborn.socbot.events.EventManager;
@@ -44,13 +45,13 @@ public class IRCServerInfo implements Listener, ServerInfo {
     Map<String, String> supports;
     List<String> motd;
 
-    public IRCServerInfo() {
+    public IRCServerInfo(SocBot bot) {
         yourHost = "";
         created = "";
         supports = new HashMap<String, String>();
         motd = new ArrayList<String>();
 
-        EventManager.registerEvents(this, this);
+        EventManager.registerEvents(this, bot);
     }
 
     @EventHandler
@@ -96,6 +97,34 @@ public class IRCServerInfo implements Listener, ServerInfo {
 
     public String getSupport(String key) {
         return supports.get(key);
+    }
+    
+    public boolean isPrefixed(String nick) {
+        if (getSupport("PREFIX") == null) {
+            return false;
+        }
+        
+        String[] parts = getSupport("PREFIX").split("[)]");
+        String keys = parts[1];
+        
+        return keys.contains(nick.substring(0, 1));
+    }
+    
+    public String getModeByPrefix(String prefix) {
+        if (getSupport("PREFIX") == null) {
+            return null;
+        }
+        
+        String[] parts = getSupport("PREFIX").split("[)]");
+        String values = parts[0].replace("(", "");
+        String keys = parts[1];
+        
+        int index = keys.indexOf(prefix.substring(0, 1));
+        if (index == -1) {
+            return null;
+        }
+        
+        return String.valueOf(values.charAt(index));
     }
 
     public boolean hasMOTD() {

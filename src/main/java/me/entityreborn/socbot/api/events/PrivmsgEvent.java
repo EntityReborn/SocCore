@@ -5,6 +5,7 @@
 package me.entityreborn.socbot.api.events;
 
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.events.HandlerList;
 
 /**
@@ -16,7 +17,6 @@ public class PrivmsgEvent extends TargetedEvent {
 
     public PrivmsgEvent(Packet p) {
         super(p);
-        String message = p.getMessage();
     }
 
     public static HandlerList getHandlerList() {
@@ -26,5 +26,9 @@ public class PrivmsgEvent extends TargetedEvent {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+    
+    public User getUser() {
+        return getBot().getUser(getSender());
     }
 }

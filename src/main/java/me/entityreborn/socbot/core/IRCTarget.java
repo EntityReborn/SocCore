@@ -53,6 +53,10 @@ public abstract class IRCTarget implements Target {
 
     public void sendMsg(String... message) {
         for (String msg : message) {
+            if (msg == null) {
+                continue;
+            }
+            
             String[] parts = msg.split("\r?\n");
             
             for (String part : parts) {
@@ -63,6 +67,10 @@ public abstract class IRCTarget implements Target {
 
     public void sendCTCP(String type, String... message) {
         for (String msg : message) {
+            if (msg == null) {
+                continue;
+            }
+            
             String[] parts = msg.split("\r?\n");
             
             for (String part : parts) {
@@ -73,6 +81,10 @@ public abstract class IRCTarget implements Target {
 
     public void sendNotice(String... message) {
         for (String msg : message) {
+            if (msg == null) {
+                continue;
+            }
+            
             String[] parts = msg.split("\r?\n");
             
             for (String part : parts) {
@@ -83,6 +95,10 @@ public abstract class IRCTarget implements Target {
 
     public void sendCTCPReply(String type, String... message) {
         for (String msg : message) {
+            if (msg == null) {
+                continue;
+            }
+            
             String[] parts = msg.split("\r?\n");
             
             for (String part : parts) {

@@ -43,7 +43,7 @@ public abstract class AbstractPacketEvent extends AbstractEvent {
         return packet.getMessage();
     }
     
-    public User getSender() {
+    public String getSender() {
         return packet.getSender();
     }
 }

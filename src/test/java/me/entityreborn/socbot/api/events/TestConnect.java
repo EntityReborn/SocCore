@@ -55,7 +55,7 @@ public class TestConnect implements Listener {
         
         List<String> sent = TestUtils.getSent();
         
-        assertEquals(sent.contains("NICK Test"), true);
+        assertEquals(sent.contains("NICK tester"), true);
         assertEquals(sent.contains("USER SocPuppet 8 * :SocPuppet"), true);
         assertEquals(sent.contains("PONG :2B16CDCD"), true);
     }

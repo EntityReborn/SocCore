@@ -47,8 +47,8 @@ public class Core extends Engine implements SocBot, Listener {
 
     static String VERSION = "";
     UserChannelMap userChannelMap;
-    Map<String, User> userMap;
-    Map<String, Channel> channelMap;
+    Map<String, IRCUser> userMap;
+    Map<String, IRCChannel> channelMap;
     ServerInfo serverInfo;
 
     static {
@@ -78,9 +78,9 @@ public class Core extends Engine implements SocBot, Listener {
      */
     public Core() {
         userChannelMap = new IRCUserChannelMap();
-        userMap = new HashMap<String, User>();
-        channelMap = new HashMap<String, Channel>();
-        serverInfo = new IRCServerInfo();
+        userMap = new HashMap<String, IRCUser>();
+        channelMap = new HashMap<String, IRCChannel>();
+        serverInfo = new IRCServerInfo(this);
     }
 
     public ServerInfo getServerInfo() {
@@ -91,15 +91,29 @@ public class Core extends Engine implements SocBot, Listener {
         return VERSION;
     }
 
-    public Channel getChannel(String channel) {
-        if (!channelMap.containsKey(channel.toLowerCase())) {
-            channelMap.put(channel.toLowerCase(), new IRCChannel(channel, this));
+    public IRCChannel getChannel(String channel) {
+        return getChannel(channel, false);
+    }
+    
+    public IRCChannel getChannel(String channel, boolean autoadd) {
+        IRCChannel chan = channelMap.get(channel.toLowerCase());
+        
+        if (chan == null) {
+            chan = new IRCChannel(channel, this);
+            
+            if (autoadd) {
+                channelMap.put(channel.toLowerCase(), chan);
+            }
         }
-
-        return channelMap.get(channel.toLowerCase());
+        
+        return chan;
+    }
+    
+    public IRCUser getUser(String nick) {
+        return getUser(nick, false);
     }
 
-    public User getUser(String nick) {
+    public IRCUser getUser(String nick, boolean autoadd) {
         String host = "";
 
         // Lets clean up the name to get the actual nick
@@ -120,13 +134,18 @@ public class Core extends Engine implements SocBot, Listener {
                 nick = nick.substring(1);
             }
         }
-
+        
+        IRCUser u;
+        
         if (!userMap.containsKey(nick.toLowerCase())) {
-            User u = new IRCUser(nick, this);
-            userMap.put(nick.toLowerCase(), u);
+            u = new IRCUser(nick, this);
+            
+            if (autoadd) {
+                userMap.put(nick.toLowerCase(), u);
+            }
+        } else {
+            u = userMap.get(nick.toLowerCase());
         }
-
-        User u = userMap.get(nick.toLowerCase());
 
         //Update the hostmask if we are given it.
         if (!host.isEmpty()) {
@@ -159,25 +178,41 @@ public class Core extends Engine implements SocBot, Listener {
         String message = packet.getMessage();
 
         AbstractEvent evt = null;
+        
+        if (command.equals("JOIN")) {
+            String channel;
+            
+            if (packet.getMessage().isEmpty()) {
+                channel = packet.getArgs().get(0);
+            } else {
+                channel = packet.getMessage();
+            }
+            
+            if (!channelMap.containsKey(channel.toLowerCase())) {
+                channelMap.put(channel.toLowerCase(), new IRCChannel(channel, this));
+            }
+        }
 
         if (packet.getNumeric() != Numeric.UNKNOWN) {
             evt = handleNumeric(packet);
         } else if (command.equals("JOIN")) {
             JoinEvent jn = new JoinEvent(packet);
-
-            userChannelMap.add(packet.getSender(), jn.getChannel());
-            jn.getChannel().trackUser(packet.getSender());
+            IRCChannel chan = getChannel(jn.getChannel().getName());
+            
+            userChannelMap.add(getUser(packet.getSender(), true), chan);
+            chan.trackUser(getUser(packet.getSender()));
 
             evt = jn;
         } else if (command.equals("PART")) {
             PartEvent pt = new PartEvent(packet);
-            Channel chan = pt.getChannel();
-            chan.untrackUser(packet.getSender());
+            IRCChannel chan = getChannel(pt.getChannel().getName());
+            
+            chan.untrackUser(getUser(packet.getSender()));
 
-            if (packet.getSender().getName().equals(getNickname())) {
+            if (packet.getSender().equalsIgnoreCase(getNickname())) {
                 userChannelMap.removeAllMappingsForChannel(chan);
             } else {
-                userChannelMap.remove(packet.getSender(), chan);
+                userChannelMap.remove(getUser(packet.getSender()), chan);
             }
 
             evt = pt;
@@ -186,25 +221,27 @@ public class Core extends Engine implements SocBot, Listener {
             Set<Channel> chans = userChannelMap.getChannels(ke.getKicked());
 
             for (Channel chan : chans) {
-                chan.untrackUser(ke.getKicked());
+                IRCChannel thechan = getChannel(ke.getChannel().getName());
+                thechan.untrackUser(ke.getKicked());
             }
 
-            if (packet.getSender().getName().equals(getNickname())) {
+            if (packet.getSender().equalsIgnoreCase(getNickname())) {
                 userChannelMap.removeAllMappingsForChannel(ke.getChannel());
             } else {
-                userChannelMap.remove(packet.getSender(), ke.getChannel());
+                userChannelMap.remove(getUser(packet.getSender()), ke.getChannel());
             }
 
             evt = ke;
         } else if (command.equals("QUIT")) {
             QuitEvent qt = new QuitEvent(packet);
             Set<Channel> chans = userChannelMap.getChannels(qt.getUser());
-
+            
             for (Channel chan : chans) {
-                chan.untrackUser(qt.getUser());
+                IRCChannel thechan = getChannel(chan.getName());
+                thechan.untrackUser(qt.getUser());
             }
 
-            userChannelMap.removeAllMappingsForUser(packet.getSender());
+            userChannelMap.removeAllMappingsForUser(getUser(packet.getSender()));
             userMap.remove(qt.getUser().getName().toLowerCase());
 
             evt = qt;
@@ -223,7 +260,7 @@ public class Core extends Engine implements SocBot, Listener {
         } else if (command.equals("NICK")) {
             NickEvent ne = new NickEvent(packet);
 
-            User u = ne.getSender();
+            IRCUser u = getUser(ne.getSender());
             u.setName(ne.getNewNick());
 
             userMap.put(ne.getNewNick(), userMap.remove(ne.getOldNick()));
@@ -232,7 +269,7 @@ public class Core extends Engine implements SocBot, Listener {
         } else if (command.equals("MODE")) {
             if (packet.getArgs().size() > 2) {
                 ChannelUserModeChangeEvent cumce = new ChannelUserModeChangeEvent(packet);
-                Channel chan = (Channel) cumce.getTarget();
+                IRCChannel chan = getChannel(cumce.getChannel().getName());
 
                 for (Map.Entry<User, String> entry : cumce.getAddedModes().entrySet()) {
                     chan.addUserMode(entry.getKey(), entry.getValue());
@@ -245,7 +282,7 @@ public class Core extends Engine implements SocBot, Listener {
                 evt = cumce;
             } else {
                 ModeChangeEvent mce = new ModeChangeEvent(packet);
-                Target tgt = mce.getTarget();
+                IRCTarget tgt = (IRCTarget)mce.getTarget();
 
                 tgt.addModes(mce.getAddedModes());
                 tgt.removeModes(mce.getRemovedModes());
@@ -278,9 +315,14 @@ public class Core extends Engine implements SocBot, Listener {
                 String channelname = packet.getArgs().get(last);
 
                 for (String name : names) {
-                    User user = getUser(name);
-                    Channel channel = getChannel(channelname);
+                    User user = getUser(name, true);
+                    IRCChannel channel = getChannel(channelname);
+                    channel.trackUser(user);
                     userChannelMap.add(user, channel);
+                    
+                    if (serverInfo.isPrefixed(name)) {
+                        channel.addUserMode(user, serverInfo.getModeByPrefix(name));
+                    }
                 }
 
                 break;
