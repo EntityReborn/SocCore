@@ -48,7 +48,7 @@ public class TestConnect implements Listener {
         Core bot = TestUtils.init(input, output, conf);
 
         bot.connect(conf.getServer(), conf.getPort(), null, TestUtils.getSockFactory());
-        Thread.sleep(100); // Catch up with threaded events.
+        Thread.sleep(200); // Catch up with threaded events.
         
         InetAddress addr = InetAddress.getByName(conf.getServer());
         verify(TestUtils.getSockFactory()).createSocket(conf.getServer(), conf.getPort(), addr, 0);

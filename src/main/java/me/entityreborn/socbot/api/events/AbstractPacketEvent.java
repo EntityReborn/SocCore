@@ -6,6 +6,7 @@ package me.entityreborn.socbot.api.events;
 
 import me.entityreborn.socbot.api.Packet;
 import me.entityreborn.socbot.api.SocBot;
+import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.events.HandlerList;
 
@@ -15,6 +16,7 @@ import me.entityreborn.socbot.events.HandlerList;
  */
 public abstract class AbstractPacketEvent extends AbstractEvent {
     Packet packet;
+    Target sender;
     
     private static final HandlerList handlers = new HandlerList(AbstractEvent.getHandlerList());
     
@@ -29,6 +31,15 @@ public abstract class AbstractPacketEvent extends AbstractEvent {
 
     public AbstractPacketEvent(Packet p) {
         packet = p;
+        String name = p.getSender();
+        
+        if (name != null) {
+            if (User.Util.isUser(name, p.getBot())) {
+                sender = p.getBot().getUser(name);
+            } else {
+                sender = p.getBot().getChannel(name);
+            }
+        }
     }
 
     public SocBot getBot() {
@@ -43,7 +54,7 @@ public abstract class AbstractPacketEvent extends AbstractEvent {
         return packet.getMessage();
     }
     
-    public String getSender() {
-        return packet.getSender();
+    public Target getSender() {
+        return sender;
     }
 }

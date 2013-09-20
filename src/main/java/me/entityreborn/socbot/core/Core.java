@@ -32,7 +32,6 @@ import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.SocBot;
 import me.entityreborn.socbot.api.Numerics.Numeric;
 import me.entityreborn.socbot.api.ServerInfo;
-import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.api.UserChannelMap;
 import me.entityreborn.socbot.api.events.*;
@@ -260,7 +259,7 @@ public class Core extends Engine implements SocBot, Listener {
         } else if (command.equals("NICK")) {
             NickEvent ne = new NickEvent(packet);
 
-            IRCUser u = getUser(ne.getSender());
+            IRCUser u = getUser(ne.getSender().getName());
             u.setName(ne.getNewNick());
 
             userMap.put(ne.getNewNick(), userMap.remove(ne.getOldNick()));

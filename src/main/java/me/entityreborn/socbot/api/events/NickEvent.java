@@ -5,6 +5,8 @@
 package me.entityreborn.socbot.api.events;
 
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.Target;
+import me.entityreborn.socbot.api.User;
 import me.entityreborn.socbot.events.HandlerList;
 
 /**
@@ -33,5 +35,15 @@ public class NickEvent extends TargetedEvent {
     
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+    
+    public User getUser() {
+        Target target = getSender();
+        
+        if (target instanceof User) {
+            return (User)target;
+        }
+        
+        return null;
     }
 }

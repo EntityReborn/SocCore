@@ -99,7 +99,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof ModeChangeEvent);
         ModeChangeEvent we = (ModeChangeEvent) event;
 
-        assertEquals(we.getSender(), "localhost");
+        assertEquals(we.getSender().getName(), "localhost");
         assertEquals(we.getTarget().getName(), conf.getNick());
 
         assertEquals(we.getAddedModes().length(), 1);
@@ -114,7 +114,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof ModeChangeEvent);
         we = (ModeChangeEvent) event;
 
-        assertEquals(we.getSender(), "localhost");
+        assertEquals(we.getSender().getName(), "localhost");
         assertEquals(we.getTarget().getName(), "#testing");
 
         assertEquals(we.getAddedModes().length(), 1);
@@ -130,7 +130,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof ChannelUserModeChangeEvent);
         ChannelUserModeChangeEvent e = (ChannelUserModeChangeEvent) event;
 
-        assertEquals(e.getSender(), "localhost");
+        assertEquals(e.getSender().getName(), "localhost");
         assertEquals(e.getChannel().getName(), "#testing");
 
         assertEquals(e.getAddedModes().size(), 1);
@@ -149,7 +149,7 @@ public class TestEventParsing implements Listener {
         NoticeEvent e = (NoticeEvent) event;
 
         assertEquals(e.getMessage(), "Test!");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
@@ -163,7 +163,7 @@ public class TestEventParsing implements Listener {
 
         assertEquals(e.getMessage(), "Test!");
         assertEquals(e.getType(), "PING");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
@@ -176,7 +176,7 @@ public class TestEventParsing implements Listener {
         PrivmsgEvent e = (PrivmsgEvent) event;
 
         assertEquals(e.getMessage(), "Test!");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
@@ -190,7 +190,7 @@ public class TestEventParsing implements Listener {
 
         assertEquals(e.getMessage(), "Test!");
         assertEquals(e.getType(), "ACTION");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
     }
 
@@ -203,7 +203,7 @@ public class TestEventParsing implements Listener {
         JoinEvent e = (JoinEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
 
         // Test it with the channel given as an arg
         bot.handleLine(":tester!test@test.com JOIN #testing");
@@ -212,7 +212,7 @@ public class TestEventParsing implements Listener {
         e = (JoinEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TestEventParsing implements Listener {
         PartEvent e = (PartEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getPartMessage(), "Bye!");
 
         // Test it without message
@@ -235,7 +235,7 @@ public class TestEventParsing implements Listener {
         e = (PartEvent) event;
 
         assertEquals(e.getChannel().getName(), "#testing");
-        assertEquals(bot.getUser(e.getSender()).getName(), "tester");
+        assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getPartMessage(), "");
     }
 
@@ -268,7 +268,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof KickEvent);
         KickEvent e = (KickEvent) event;
 
-        assertEquals(bot.getUser(e.getSender()).getName(), "kicker");
+        assertEquals(e.getKicker().getName(), "kicker");
         assertEquals(e.getChannel().getName(), "#testing");
         assertEquals(e.getKicked().getName(), "kickee");
         assertEquals(e.getKickMessage(), "Bye!");
@@ -280,7 +280,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof KickEvent);
         e = (KickEvent) event;
 
-        assertEquals(bot.getUser(e.getSender()).getName(), "kicker");
+        assertEquals(e.getKicker().getName(), "kicker");
         assertEquals(e.getChannel().getName(), "#testing");
         assertEquals(e.getKicked().getName(), "kickee");
         assertEquals(e.getKickMessage(), "");
@@ -297,7 +297,7 @@ public class TestEventParsing implements Listener {
         NumericEvent e = (NumericEvent) event;
         
         assertEquals(e.getNumeric(), Numeric.RPL_NAMREPLY);
-        assertEquals(e.getSender(), "localhost");
+        assertEquals(e.getSender().getName(), "localhost");
         assertEquals(e.getTarget().getName(), "Testing");
         
         List<String> args = e.getPacket().getArgs();

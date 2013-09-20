@@ -7,6 +7,7 @@ package me.entityreborn.socbot.api.events;
 import me.entityreborn.socbot.events.HandlerList;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
 
 /**
@@ -16,13 +17,11 @@ import me.entityreborn.socbot.api.User;
 public class PartEvent extends TargetedEvent {
     private static final HandlerList handlers = new HandlerList(TargetedEvent.getHandlerList());
     private Channel channel;
-    private User user;
     
     public PartEvent(Packet p) {
         super(p);
         
         channel = (Channel)getTarget();
-        user = getBot().getUser(p.getSender());
     }
 
     public static HandlerList getHandlerList() {
@@ -39,7 +38,13 @@ public class PartEvent extends TargetedEvent {
     }
     
     public User getUser() {
-        return user;
+        Target target = getSender();
+        
+        if (target instanceof User) {
+            return (User)target;
+        }
+        
+        return null;
     }
     
     public String getPartMessage() {

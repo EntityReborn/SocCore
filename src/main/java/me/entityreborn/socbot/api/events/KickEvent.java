@@ -8,6 +8,7 @@ import java.util.List;
 import me.entityreborn.socbot.events.HandlerList;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
 
 /**
@@ -18,6 +19,7 @@ public class KickEvent extends TargetedEvent {
     private static final HandlerList handlers = new HandlerList(TargetedEvent.getHandlerList());
     private Channel channel;
     private User kickee;
+    private User kicker;
     
     public KickEvent(Packet p) {
         super(p);
@@ -42,6 +44,16 @@ public class KickEvent extends TargetedEvent {
     
     public User getKicked() {
         return kickee;
+    }
+    
+    public User getKicker() {
+        Target target = getSender();
+        
+        if (target instanceof User) {
+            return (User)target;
+        }
+        
+        return null;
     }
     
     public String getKickMessage() {

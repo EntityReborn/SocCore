@@ -28,6 +28,7 @@ import me.entityreborn.socbot.api.Connection;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import javax.net.SocketFactory;
 import me.entityreborn.socbot.api.events.ConnectedEvent;
 import me.entityreborn.socbot.api.events.ConnectingEvent;
@@ -83,19 +84,19 @@ public abstract class Engine implements Connection {
         }
     }
 
-    public void connect(String srvr) {
+    public void connect(String srvr) throws IOException {
         connect(srvr, 6667, "", null);
     }
 
-    public void connect(String server, int port) {
+    public void connect(String server, int port) throws IOException {
         connect(server, port, "", null);
     }
 
-    public void connect(String server, int port, String password) {
+    public void connect(String server, int port, String password) throws IOException {
         connect(server, port, password, sockfactory);
     }
 
-    public void connect(String server, int port, String password, SocketFactory factory) {
+    public void connect(String server, int port, String password, SocketFactory factory) throws UnknownHostException, IOException {
         sockfactory = factory;
 
         isConnecting = true;
@@ -103,50 +104,42 @@ public abstract class Engine implements Connection {
 
         EventManager.callEvent(new ConnectingEvent(server, port), this);
 
-        try {
-            if (factory != null) {
-                for (InetAddress addr : InetAddress.getAllByName(server)) {
-                    try {
-                        sock = sockfactory.createSocket(server, port, addr, 0);
-
-                        break;
-                    } catch (Throwable t) {
-                        handleException(t);
-                    }
-                }
-            } else {
-                sock = new Socket(server, port, null, 0);
+        if (factory != null) {
+            for (InetAddress addr : InetAddress.getAllByName(server)) {
+                sock = sockfactory.createSocket(server, port, addr, 0);
+                break;
             }
-
-            if (sock == null) {
-                throw new RuntimeException("Could not connect to a server.");
-            }
-
-            in = new InputThread(sock.getInputStream(), this);
-            out = new OutputThread(sock.getOutputStream(), this);
-
-            int count = getCountAndIncrement();
-            in.setName("input-" + count);
-            out.setName("output-" + count);
-
-            out.start();
-
-            EventManager.callEvent(new ConnectedEvent(server, port), this);
-
-            if (password != null && !password.trim().equals("")) {
-                sendLine("PASS " + password.trim());
-            }
-
-            sendLine("NICK " + getNickname());
-            sendLine("USER " + getUsername() + " 8 * :" + getRealname());
-
-            in.start();
-
-            isConnecting = false;
-            isConnected = true;
-        } catch (Throwable t) {
-            handleException(t);
+        } else {
+            sock = new Socket(server, port, null, 0);
         }
+
+        if (sock == null) {
+            throw new RuntimeException("Could not connect to a server.");
+        }
+
+        in = new InputThread(sock.getInputStream(), this);
+        out = new OutputThread(sock.getOutputStream(), this);
+
+        int count = getCountAndIncrement();
+        in.setName("input-" + count);
+        out.setName("output-" + count);
+
+        out.start();
+
+        EventManager.callEvent(new ConnectedEvent(server, port), this);
+
+        if (password != null && !password.trim().equals("")) {
+            sendLine("PASS " + password.trim());
+        }
+
+        sendLine("NICK " + getNickname());
+        sendLine("USER " + getUsername() + " 8 * :" + getRealname());
+
+        in.start();
+
+        isConnecting = false;
+        isConnected = true;
+        
     }
 
     /**

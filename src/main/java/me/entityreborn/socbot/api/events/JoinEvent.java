@@ -7,6 +7,8 @@ package me.entityreborn.socbot.api.events;
 import me.entityreborn.socbot.events.HandlerList;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.Target;
+import me.entityreborn.socbot.api.User;
 
 /**
  *
@@ -38,7 +40,13 @@ public class JoinEvent extends TargetedEvent {
         }
     }
     
-    public String getUser() {
-        return getSender();
+    public User getUser() {
+        Target target = getSender();
+        
+        if (target instanceof User) {
+            return (User)target;
+        }
+        
+        return null;
     }
 }

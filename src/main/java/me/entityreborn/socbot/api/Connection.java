@@ -23,6 +23,7 @@
  */
 package me.entityreborn.socbot.api;
 
+import java.io.IOException;
 import javax.net.SocketFactory;
 
 /**
@@ -35,17 +36,17 @@ public interface Connection {
      * Connect the bot to a given server. <p> The server will connect to port
      * 6667 by default.
      *
-     * @param srvr server to connect to
+     * @param server server to connect to
      */
-    public void connect(String server);
+    public void connect(String server) throws IOException;
 
     /**
      * Connect the bot to a given server and port.
      *
-     * @param srvr server to connect to
-     * @param prt port to connect to
+     * @param server server to connect to
+     * @param port port to connect to
      */
-    public void connect(String server, int port);
+    public void connect(String server, int port) throws IOException;
 
     /**
      * Connect the bot to a given server and port, providing a server password.
@@ -54,7 +55,7 @@ public interface Connection {
      * @param port port to connect to
      * @param password password to use during registration
      */
-    public void connect(String server, int port, String password);
+    public void connect(String server, int port, String password) throws IOException;
 
     /**
      * Connect the bot to a given server and port, providing a server password
@@ -64,8 +65,9 @@ public interface Connection {
      * @param port port to connect to
      * @param password password to use during registration
      * @param factory socketfactory to use to provide sockets
+     * @throws java.io.IOException
      */
-    public void connect(String server, int port, String password, SocketFactory factory);
+    public void connect(String server, int port, String password, SocketFactory factory) throws IOException;
 
     /**
      * Forcefully shut down everything and return the bot into a disconnected

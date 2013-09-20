@@ -25,6 +25,7 @@ package me.entityreborn.socbot.api.events;
 
 import me.entityreborn.socbot.events.HandlerList;
 import me.entityreborn.socbot.api.Packet;
+import me.entityreborn.socbot.api.Target;
 import me.entityreborn.socbot.api.User;
 
 /**
@@ -33,12 +34,9 @@ import me.entityreborn.socbot.api.User;
  */
 public class QuitEvent extends AbstractPacketEvent {
     private static final HandlerList handlers = new HandlerList(AbstractPacketEvent.getHandlerList());
-    private User user;
     
     public QuitEvent(Packet p) {
         super(p);
-        
-        user = getBot().getUser(p.getSender());
     }
 
     public static HandlerList getHandlerList() {
@@ -51,7 +49,13 @@ public class QuitEvent extends AbstractPacketEvent {
     }
     
     public User getUser() {
-        return user;
+        Target target = getSender();
+        
+        if (target instanceof User) {
+            return (User)target;
+        }
+        
+        return null;
     }
     
     public String getQuitMessage() {

@@ -23,6 +23,9 @@
  */
 package me.entityreborn.socbot.example;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import me.entityreborn.socbot.api.Channel;
 import me.entityreborn.socbot.api.SocBot;
 import me.entityreborn.socbot.api.User;
@@ -47,8 +50,8 @@ public class Example implements Listener {
         
         EventManager.registerEvents(new Example(), bot);
 
-        bot.setNickname("Testing");
-        bot.connect("127.0.0.1");
+        bot.setNickname("Testing123");
+        bot.connect("irc.esper.net");
     }
     
     public void debug(String s) {
@@ -64,14 +67,52 @@ public class Example implements Listener {
     public void handlePrivMsg(PrivmsgEvent e) {
         debug(e.getUser().getName() + " said '" + e.getMessage() + "' to " + e.getTarget());
         
-        if (e.getMessage().toLowerCase().startsWith("^ping")) {
+        List<String> args = new ArrayList<String>(Arrays.asList(e.getMessage().split(" ")));
+        if (args.size() < 1) {
+            return;
+        }
+        
+        String command = args.remove(0);
+        
+        if (command.startsWith("^ping")) {
             e.getTarget().sendMsg("Pong!");
-        } else if (e.getMessage().toLowerCase().startsWith("^data")) {
+            
+            return;
+        } else if (command.startsWith("^data")) {
             Channel chan = (Channel)e.getTarget();
             
             for (User user : chan.getUsers()) {
                 e.getTarget().sendMsg(user.getName() + " " + chan.getUserModes(user));
             }
+            
+            return;
+        } else if (command.startsWith("^quit")) {
+            e.getBot().quit();
+            
+            return;
+        } else if (command.startsWith("^disconnect")) {
+            e.getBot().disconnect();
+            
+            return;
+        } else if (command.startsWith("^isop")) {
+            if (args.isEmpty()) {
+                e.getTarget().sendMsg("^isop <name>");
+                return;
+            } else if (e.getTarget() instanceof User) {
+                e.getTarget().sendMsg("Not in a channel");
+                return;
+            }
+            
+            Channel chan = (Channel)e.getTarget();
+            boolean isop = chan.userHasMode(e.getBot().getUser(args.get(0)), "o");
+            
+            if (isop) {
+                e.getTarget().sendMsg("Yup");
+            } else {
+                e.getTarget().sendMsg("Nerp");
+            }
+            
+            return;
         }
     }
     
@@ -88,8 +129,6 @@ public class Example implements Listener {
     
     @EventHandler
     public void handlePart(PartEvent e) {
-        String them = e.getUser().getName();
-        
         e.getChannel().sendMsg("Bye!");
     }
     
