@@ -112,12 +112,8 @@ public class Core extends Engine implements SocBot, Listener {
         return channelMap.get(channel.toLowerCase());
     }
     
-    public IRCUser getUser(String nick) {
-        return getUser(nick, false);
-    }
-
-    public IRCUser getUser(String nick, boolean autoadd) {
-        String host = "";
+    public IRCUser getUser(String nick, boolean track) {
+        String host = null;
 
         // Lets clean up the name to get the actual nick
         // instead of the full hostmask
@@ -138,25 +134,22 @@ public class Core extends Engine implements SocBot, Listener {
             }
         }
         
-        IRCUser u;
+        IRCUser u = userMap.get(nick.toLowerCase());
         
-        if (!userMap.containsKey(nick.toLowerCase())) {
+        if (u == null && track) {
             u = new IRCUser(nick, this);
-            
-            if (autoadd) {
-                userMap.put(nick.toLowerCase(), u);
-            }
-        } else {
-            u = userMap.get(nick.toLowerCase());
+            userMap.put(nick.toLowerCase(), u);
         }
-
-        //Update the hostmask if we are given it.
-        if (!host.isEmpty()) {
+        
+        if (u != null && host != null) {
             u.setHostmask(host);
         }
-        //TODO: Arrays.asList(host.split("")));
-
+        
         return u;
+    }
+
+    public IRCUser getUser(String nick) {
+       return getUser(nick, true);
     }
 
     @Override

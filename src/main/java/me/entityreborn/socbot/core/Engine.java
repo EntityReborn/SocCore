@@ -174,13 +174,19 @@ public abstract class Engine implements Connection {
 
 
     public void sendLine(String line) {
-        EventManager.callEvent(new LineSendEvent(line), this);
-        out.send(line);
+        if (out != null) {
+            EventManager.callEvent(new LineSendEvent(line), this);
+            
+            out.send(line);
+        }
     }
 
     public void sendLineNow(String line) {
-        EventManager.callEvent(new LineSendEvent(line, true), this);
-        out.sendNow(line);
+        if (out != null) {
+            EventManager.callEvent(new LineSendEvent(line, true), this);
+            
+            out.sendNow(line);
+        }
     }
 
 

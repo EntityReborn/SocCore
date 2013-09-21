@@ -36,13 +36,13 @@ import me.entityreborn.socbot.api.SocBot;
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class IRCPacket implements Packet {
-    private String originalLine;
+    private final String originalLine;
     private String sender;
     private String message = "";
     private List<String> args;
     private String command;
     private Numeric numeric;
-    private SocBot bot;
+    private final SocBot bot;
     
     public IRCPacket(String l, SocBot b) {
         bot = b;
