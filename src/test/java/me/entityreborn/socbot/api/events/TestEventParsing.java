@@ -263,6 +263,7 @@ public class TestEventParsing implements Listener {
     @Test
     public void testKick() {
         // Test it with message
+        bot.handleLine(":tester!test@test.com JOIN :#testing");
         bot.handleLine(":kicker!test@test.com KICK #testing kickee :Bye!");
 
         assertTrue(event instanceof KickEvent);
@@ -302,7 +303,7 @@ public class TestEventParsing implements Listener {
         
         List<String> args = e.getPacket().getArgs();
         
-        Channel chan = bot.getChannel(args.get(args.size() - 1), true);
+        Channel chan = bot.trackChannel(args.get(args.size() - 1));
         User u = bot.getUser("__import__", true);
         
         assertTrue(chan.getUserModes().containsKey(u));

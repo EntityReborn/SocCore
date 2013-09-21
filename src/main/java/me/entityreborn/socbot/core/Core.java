@@ -89,23 +89,21 @@ public class Core extends Engine implements SocBot, Listener {
     public String getVersion() {
         return VERSION;
     }
-
-    public IRCChannel getChannel(String channel) {
-        return getChannel(channel, false);
-    }
     
-    public IRCChannel getChannel(String channel, boolean autoadd) {
+    public IRCChannel trackChannel(String channel) {
         IRCChannel chan = channelMap.get(channel.toLowerCase());
         
         if (chan == null) {
             chan = new IRCChannel(channel, this);
             
-            if (autoadd) {
-                channelMap.put(channel.toLowerCase(), chan);
-            }
+            channelMap.put(channel.toLowerCase(), chan);
         }
         
         return chan;
+    }
+    
+    public IRCChannel getChannel(String channel) {
+        return channelMap.get(channel.toLowerCase());
     }
     
     public IRCUser getUser(String nick) {
@@ -196,7 +194,7 @@ public class Core extends Engine implements SocBot, Listener {
             evt = handleNumeric(packet);
         } else if (command.equals("JOIN")) {
             JoinEvent jn = new JoinEvent(packet);
-            IRCChannel chan = getChannel(jn.getChannel().getName());
+            IRCChannel chan = trackChannel(jn.getChannel().getName());
             
             userChannelMap.add(getUser(packet.getSender(), true), chan);
             chan.trackUser(getUser(packet.getSender()));
@@ -204,24 +202,29 @@ public class Core extends Engine implements SocBot, Listener {
             evt = jn;
         } else if (command.equals("PART")) {
             PartEvent pt = new PartEvent(packet);
-            IRCChannel chan = getChannel(pt.getChannel().getName());
+            IRCChannel chan = (IRCChannel)pt.getChannel();
             
-            chan.untrackUser(getUser(packet.getSender()));
+            if (chan != null) {
+                chan.untrackUser(getUser(packet.getSender()));
 
-            if (packet.getSender().equalsIgnoreCase(getNickname())) {
-                userChannelMap.removeAllMappingsForChannel(chan);
-            } else {
-                userChannelMap.remove(getUser(packet.getSender()), chan);
+                if (packet.getSender().equalsIgnoreCase(getNickname())) {
+                    userChannelMap.removeAllMappingsForChannel(chan);
+                } else {
+                    userChannelMap.remove(getUser(packet.getSender()), chan);
+                }
             }
-
+            
             evt = pt;
         } else if (command.equals("KICK")) {
             KickEvent ke = new KickEvent(packet);
             Set<Channel> chans = userChannelMap.getChannels(ke.getKicked());
 
             for (Channel chan : chans) {
-                IRCChannel thechan = getChannel(ke.getChannel().getName());
-                thechan.untrackUser(ke.getKicked());
+                IRCChannel thechan = (IRCChannel)ke.getChannel();
+                
+                if (thechan != null) {
+                    thechan.untrackUser(ke.getKicked());
+                }
             }
 
             if (packet.getSender().equalsIgnoreCase(getNickname())) {
@@ -237,7 +240,10 @@ public class Core extends Engine implements SocBot, Listener {
             
             for (Channel chan : chans) {
                 IRCChannel thechan = getChannel(chan.getName());
-                thechan.untrackUser(qt.getUser());
+                
+                if (thechan != null) {
+                    thechan.untrackUser(qt.getUser());
+                }
             }
 
             userChannelMap.removeAllMappingsForUser(getUser(packet.getSender()));
@@ -268,16 +274,18 @@ public class Core extends Engine implements SocBot, Listener {
         } else if (command.equals("MODE")) {
             if (packet.getArgs().size() > 2) {
                 ChannelUserModeChangeEvent cumce = new ChannelUserModeChangeEvent(packet);
-                IRCChannel chan = getChannel(cumce.getChannel().getName());
+                IRCChannel chan = (IRCChannel)cumce.getChannel();
 
-                for (Map.Entry<User, String> entry : cumce.getAddedModes().entrySet()) {
-                    chan.addUserMode(entry.getKey(), entry.getValue());
+                if (chan != null) {
+                    for (Map.Entry<User, String> entry : cumce.getAddedModes().entrySet()) {
+                        chan.addUserMode(entry.getKey(), entry.getValue());
+                    }
+
+                    for (Map.Entry<User, String> entry : cumce.getRemovedModes().entrySet()) {
+                        chan.remUserMode(entry.getKey(), entry.getValue());
+                    }
                 }
-
-                for (Map.Entry<User, String> entry : cumce.getRemovedModes().entrySet()) {
-                    chan.remUserMode(entry.getKey(), entry.getValue());
-                }
-
+                
                 evt = cumce;
             } else {
                 ModeChangeEvent mce = new ModeChangeEvent(packet);

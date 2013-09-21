@@ -41,10 +41,10 @@ public class JoinEvent extends TargetedEvent {
     }
     
     public User getUser() {
-        Target target = getSender();
+        Target targ = getSender();
         
-        if (target instanceof User) {
-            return (User)target;
+        if (targ instanceof User) {
+            return (User)targ;
         }
         
         return null;
