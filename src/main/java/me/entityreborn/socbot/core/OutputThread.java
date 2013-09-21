@@ -36,12 +36,12 @@ import java.util.List;
  */
 public class OutputThread extends Thread {
 
-    private List<String> sendqueue = new ArrayList<String>();
+    private final List<String> sendqueue = new ArrayList<String>();
     private final BufferedWriter out;
-    private Engine engine;
+    private final Engine engine;
 
     public OutputThread(OutputStream o, Engine e) {
-        out = new BufferedWriter(new OutputStreamWriter(o));;
+        out = new BufferedWriter(new OutputStreamWriter(o));
         engine = e;
     }
 
@@ -73,7 +73,7 @@ public class OutputThread extends Thread {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
+        while (!Thread.interrupted() && engine.isConnected()) {
             try {
                 if (sendqueue.size() > 0) {
                     String line = sendqueue.remove(0);

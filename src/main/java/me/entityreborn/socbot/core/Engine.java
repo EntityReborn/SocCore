@@ -123,7 +123,9 @@ public abstract class Engine implements Connection {
         int count = getCountAndIncrement();
         in.setName("input-" + count);
         out.setName("output-" + count);
-
+        
+        isConnected = true;
+        
         out.start();
 
         EventManager.callEvent(new ConnectedEvent(server, port), this);
@@ -138,8 +140,6 @@ public abstract class Engine implements Connection {
         in.start();
 
         isConnecting = false;
-        isConnected = true;
-        
     }
 
     /**
