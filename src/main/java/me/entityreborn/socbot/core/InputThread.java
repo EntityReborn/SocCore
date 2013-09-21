@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.net.SocketException;
 
 /**
  *
@@ -57,8 +58,10 @@ public class InputThread extends Thread {
                 engine.sendPing();
                 
                 continue;
-            } catch (IOException e) {
+            } catch (SocketException e) {
                 // Die quietly.
+            } catch (IOException e) {
+                engine.handleException(e);
             }
             
             if (line == null) {
