@@ -73,7 +73,7 @@ public abstract class Engine implements Connection {
             handleException(e);
         }
 
-        if (!sock.isClosed()) {
+        if (sock != null && !sock.isClosed()) {
             try {
                 sock.shutdownInput();
                 sock.shutdownOutput();
