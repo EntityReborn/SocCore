@@ -12,8 +12,8 @@ import me.entityreborn.socbot.events.HandlerList;
  */
 public class ConnectedEvent extends AbstractEvent {
     private static final HandlerList handlers = new HandlerList(AbstractEvent.getHandlerList());
-    private String server;
-    private int port;
+    private final String server;
+    private final int port;
     
     public ConnectedEvent(String server, int port) {
         this.server = server;

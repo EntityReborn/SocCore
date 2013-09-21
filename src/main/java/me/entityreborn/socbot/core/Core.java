@@ -49,6 +49,7 @@ public class Core extends Engine implements SocBot, Listener {
     Map<String, IRCUser> userMap;
     Map<String, IRCChannel> channelMap;
     ServerInfo serverInfo;
+    String id;
 
     static {
         // Get the compiled version info from the manifest.
@@ -75,11 +76,16 @@ public class Core extends Engine implements SocBot, Listener {
     /**
      * Create a new instance of Core
      */
-    public Core() {
+    public Core(String identifier) {
+        id = identifier;
         userChannelMap = new IRCUserChannelMap();
         userMap = new HashMap<String, IRCUser>();
         channelMap = new HashMap<String, IRCChannel>();
         serverInfo = new IRCServerInfo(this);
+    }
+    
+    public String getID() {
+        return id;
     }
 
     public ServerInfo getServerInfo() {
@@ -379,5 +385,10 @@ public class Core extends Engine implements SocBot, Listener {
     
     public void part(String channel, String message) {
         sendLine("PART " + channel + " :" + message);
+    }
+
+    @Override
+    protected void fireDisconnected(boolean wasClean, Engine e) {
+        EventManager.callEvent(new DisconnectedEvent(wasClean, this), e);
     }
 }

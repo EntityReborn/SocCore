@@ -21,6 +21,11 @@ public interface SocBot extends Connection {
     public String getVersion();
 
     /**
+     * Return a custom ID for this instance.
+     * @return String defining the id.
+     */
+    public String getID();
+    /**
      * Return the known users for this bot.
      *
      * @return set of {@link User}s

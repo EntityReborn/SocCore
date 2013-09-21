@@ -63,7 +63,11 @@ public abstract class Engine implements Connection {
         return enginecount++;
     }
 
-    public void disconnect() {
+    public void disconnect(boolean clean) {
+        if (!isConnected && !isConnecting) {
+            return;
+        }
+        
         isConnected = false;
 
         try {
@@ -82,7 +86,11 @@ public abstract class Engine implements Connection {
                 handleException(e);
             }
         }
+        
+        fireDisconnected(clean, this);
     }
+    
+    protected abstract void fireDisconnected(boolean wasClean, Engine e);
 
     public void connect(String srvr) throws IOException {
         connect(srvr, 6667, "", null);

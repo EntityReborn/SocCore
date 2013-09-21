@@ -56,7 +56,7 @@ public class TestUtils {
 
     public static Core init(ByteArrayInputStream input, 
             ByteArrayOutputStream output, Config conf) throws Exception {
-        Core bot = new Core() {
+        Core bot = new Core("test") {
             @Override
             public void sendLine(String line) {
                 sent.add(line);

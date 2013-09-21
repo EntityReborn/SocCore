@@ -72,8 +72,9 @@ public interface Connection {
     /**
      * Forcefully shut down everything and return the bot into a disconnected
      * state.
+     * @param clean Signifies if the disconnect was clean (non-exception) or not.
      */
-    public void disconnect();
+    public void disconnect(boolean clean);
 
     /**
      * Get the nickname used while registering.

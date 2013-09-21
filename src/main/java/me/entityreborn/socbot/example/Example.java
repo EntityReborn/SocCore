@@ -46,7 +46,7 @@ import me.entityreborn.socbot.events.Listener;
  */
 public class Example implements Listener {
     public static void main(String[] args) throws Exception {
-        Core bot = new Core();
+        Core bot = new Core("test");
         
         EventManager.registerEvents(new Example(), bot);
 
@@ -91,7 +91,7 @@ public class Example implements Listener {
             
             return;
         } else if (command.startsWith("^disconnect")) {
-            e.getBot().disconnect();
+            e.getBot().disconnect(true);
             
             return;
         } else if (command.startsWith("^isop")) {

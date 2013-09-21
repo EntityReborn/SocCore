@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.net.SocketException;
 
 /**
  *
@@ -36,8 +35,8 @@ import java.net.SocketException;
  */
 public class InputThread extends Thread {
 
-    private BufferedReader in;
-    private Engine engine;
+    private final BufferedReader in;
+    private final Engine engine;
 
     public InputThread(InputStream i, Engine c) {
         in = new BufferedReader(new InputStreamReader(i));
@@ -58,10 +57,8 @@ public class InputThread extends Thread {
                 engine.sendPing();
                 
                 continue;
-            } catch (SocketException e) {
-                // Die quietly.
             } catch (IOException e) {
-                engine.handleException(e);
+                engine.disconnect(false);
             }
             
             if (line == null) {
@@ -75,8 +72,8 @@ public class InputThread extends Thread {
             }
         }
 
-        if (!Thread.interrupted()) {
-            engine.disconnect();
+        if (engine.isConnected() && !Thread.interrupted()) {
+            engine.disconnect(true);
         }
     }
 }
