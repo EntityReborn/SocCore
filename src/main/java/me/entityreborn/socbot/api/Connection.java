@@ -37,6 +37,7 @@ public interface Connection {
      * 6667 by default.
      *
      * @param server server to connect to
+     * @throws java.io.IOException
      */
     public void connect(String server) throws IOException;
 
@@ -45,6 +46,7 @@ public interface Connection {
      *
      * @param server server to connect to
      * @param port port to connect to
+     * @throws java.io.IOException
      */
     public void connect(String server, int port) throws IOException;
 
@@ -54,6 +56,7 @@ public interface Connection {
      * @param server server to connect to
      * @param port port to connect to
      * @param password password to use during registration
+     * @throws java.io.IOException
      */
     public void connect(String server, int port, String password) throws IOException;
 

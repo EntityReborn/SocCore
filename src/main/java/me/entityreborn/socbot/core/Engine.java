@@ -71,8 +71,8 @@ public abstract class Engine implements Connection {
         isConnected = false;
 
         try {
-            in.interrupt();
-            out.interrupt();
+            if (in != null) in.interrupt();
+            if (out != null) out.interrupt();
         } catch (Exception e) {
             handleException(e);
         }
@@ -113,15 +113,21 @@ public abstract class Engine implements Connection {
         EventManager.callEvent(new ConnectingEvent(server, port), this);
 
         if (factory != null) {
-            for (InetAddress addr : InetAddress.getAllByName(server)) {
-                sock = sockfactory.createSocket(server, port, addr, 0);
-                break;
+            try {
+                for (InetAddress addr : InetAddress.getAllByName(server)) {
+                    sock = sockfactory.createSocket(server, port, addr, 0);
+                    break;
+                }
+            } catch (IOException e) {
+                isConnecting = false;
+                throw e;
             }
         } else {
             sock = new Socket(server, port, null, 0);
         }
 
         if (sock == null) {
+            isConnecting = false;
             throw new RuntimeException("Could not connect to a server.");
         }
 
@@ -129,6 +135,7 @@ public abstract class Engine implements Connection {
         out = new OutputThread(sock.getOutputStream(), this);
 
         int count = getCountAndIncrement();
+        
         in.setName("input-" + count);
         out.setName("output-" + count);
         
