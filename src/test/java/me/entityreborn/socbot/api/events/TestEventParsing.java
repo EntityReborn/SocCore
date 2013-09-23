@@ -204,6 +204,7 @@ public class TestEventParsing implements Listener {
 
         assertEquals(e.getChannel().getName(), "#testing");
         assertEquals(e.getSender().getName(), "tester");
+        assertEquals(e.getBot().getChannels().size(), 1);
 
         // Test it with the channel given as an arg
         bot.handleLine(":tester!test@test.com JOIN #testing");

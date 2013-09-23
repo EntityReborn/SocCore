@@ -91,7 +91,8 @@ public abstract class Engine implements Connection {
     }
     
     protected abstract void fireDisconnected(boolean wasClean, Engine e);
-
+    protected abstract void fireConnected(String server, int port, Engine e);
+    
     public void connect(String srvr) throws IOException {
         connect(srvr, 6667, "", null);
     }
@@ -143,7 +144,7 @@ public abstract class Engine implements Connection {
         
         out.start();
 
-        EventManager.callEvent(new ConnectedEvent(server, port), this);
+        fireConnected(server, port, this);
 
         if (password != null && !password.trim().equals("")) {
             sendLine("PASS " + password.trim());

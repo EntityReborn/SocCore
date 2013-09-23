@@ -384,4 +384,9 @@ public class Core extends Engine implements SocBot, Listener {
     protected void fireDisconnected(boolean wasClean, Engine e) {
         EventManager.callEvent(new DisconnectedEvent(wasClean, this), e);
     }
+    
+    @Override
+    protected void fireConnected(String server, int port, Engine e) {
+        EventManager.callEvent(new ConnectedEvent(server, port, this), e);
+    }
 }
