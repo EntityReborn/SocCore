@@ -295,6 +295,12 @@ public class Core extends Engine implements SocBot, Listener {
 
                 evt = mce;
             }
+        } else if (command.equals("TOPIC")) {
+            String topic = packet.getMessage();
+                
+            getChannel(packet.getArgs().get(0)).setTopic(topic);
+            
+            // No need for an event, yet.
         }
 
         if (evt != null) {
@@ -314,6 +320,13 @@ public class Core extends Engine implements SocBot, Listener {
         switch (numeric) {
             case RPL_WELCOME:
                 return new WelcomeEvent(packet);
+                
+            case RPL_TOPIC:
+                String topic = packet.getMessage();
+                
+                getChannel(packet.getArgs().get(0)).setTopic(topic);
+                
+                return null;
 
             case RPL_NAMREPLY:
                 String[] names = packet.getMessage().split(" ");
