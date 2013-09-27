@@ -114,6 +114,10 @@ public class Core extends Engine implements SocBot, Listener {
     
     public IRCUser getUser(String nick, boolean track) {
         String host = null;
+        
+        if (nick == null || nick.trim().isEmpty()) {
+            return null;
+        }
 
         // Lets clean up the name to get the actual nick
         // instead of the full hostmask
@@ -128,7 +132,7 @@ public class Core extends Engine implements SocBot, Listener {
         String statusmsg = getServerInfo().getSupport("PREFIX");
         if (statusmsg != null) {
             String prefixes = statusmsg.split("[)]", 2)[1];
-
+            
             if (prefixes.contains(nick.subSequence(0, 1))) {
                 nick = nick.substring(1);
             }
@@ -139,9 +143,11 @@ public class Core extends Engine implements SocBot, Listener {
         if (u == null && track) {
             u = new IRCUser(nick, this);
             userMap.put(nick.toLowerCase(), u);
+        } else if (u == null) {
+            return null;
         }
         
-        if (u != null && host != null) {
+        if (host != null) {
             u.setHostmask(host);
         }
         
@@ -149,7 +155,7 @@ public class Core extends Engine implements SocBot, Listener {
     }
 
     public IRCUser getUser(String nick) {
-       return getUser(nick, true);
+       return getUser(nick, false);
     }
 
     @Override

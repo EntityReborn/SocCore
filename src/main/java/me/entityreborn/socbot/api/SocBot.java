@@ -41,12 +41,22 @@ public interface SocBot extends Connection {
 
     /**
      * Get a reference to a {@link User} instance containing information about a
-     * user. <p> If the user doesn't exist yet, a new one is created.
+     * user. <p> If the user doesn't exist yet, null is returned.
      *
      * @param nick the name of the user. Case is ignored.
      * @return instance of {@link User}
      */
     public User getUser(String nick);
+    
+    /**
+     * Get a reference to a {@link User} instance containing information about a
+     * user. <p> If the user doesn't exist yet, a new one is created if track is true.
+     *
+     * @param nick the name of the user. Case is ignored.
+     * @param track decide to create a new user and return it if said user doesn't exist.
+     * @return instance of {@link User}
+     */
+    public User getUser(String nick, boolean track);
 
     /**
      * Get a reference to a {@link Channel} instance containing information

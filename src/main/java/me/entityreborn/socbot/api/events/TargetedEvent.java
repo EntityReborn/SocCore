@@ -27,7 +27,7 @@ public abstract class TargetedEvent extends AbstractPacketEvent {
             String tgt = parts.remove(0);
             
             if (Target.Util.isUser(tgt, getBot())) {
-                target = getBot().getUser(tgt);
+                target = getBot().getUser(tgt, true);
             } else {
                 target = getBot().getChannel(tgt);
             }
