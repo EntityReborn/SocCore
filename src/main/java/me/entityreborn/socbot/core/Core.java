@@ -307,6 +307,8 @@ public class Core extends Engine implements SocBot, Listener {
             getChannel(packet.getArgs().get(0)).setTopic(topic);
             
             // No need for an event, yet.
+        } else if (command.equals("ERROR")) {
+            evt = new ErrorEvent(packet);
         }
 
         if (evt != null) {
