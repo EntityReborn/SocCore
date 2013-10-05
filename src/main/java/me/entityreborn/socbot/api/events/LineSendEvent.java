@@ -4,6 +4,7 @@
  */
 package me.entityreborn.socbot.api.events;
 
+import me.entityreborn.socbot.api.SocBot;
 import me.entityreborn.socbot.events.HandlerList;
 
 /**
@@ -16,12 +17,14 @@ public class LineSendEvent extends AbstractEvent {
     private String line;
     private boolean immediate = false;
 
-    public LineSendEvent(String l) {
+    public LineSendEvent(SocBot bot, String l) {
+        super(bot);
+        
         line = l;
     }
     
-    public LineSendEvent(String l, boolean immediate) {
-        this(l);
+    public LineSendEvent(SocBot bot, String l, boolean immediate) {
+        this(bot, l);
         this.immediate = immediate;
     }
     

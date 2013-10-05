@@ -23,16 +23,12 @@
  */
 package me.entityreborn.socbot.core;
 
-import me.entityreborn.socbot.events.EventManager;
 import me.entityreborn.socbot.api.Connection;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.net.SocketFactory;
-import me.entityreborn.socbot.api.events.ConnectedEvent;
-import me.entityreborn.socbot.api.events.ConnectingEvent;
-import me.entityreborn.socbot.api.events.LineSendEvent;
 
 /**
  * Provide low level connection and lifetime management for an IRC session. <p>
@@ -91,6 +87,7 @@ public abstract class Engine implements Connection {
     }
     
     protected abstract void fireDisconnected(boolean wasClean, Engine e);
+    protected abstract void fireConnecting(String server, int port, Engine e);
     protected abstract void fireConnected(String server, int port, Engine e);
     
     public void connect(String srvr) throws IOException {
@@ -111,7 +108,7 @@ public abstract class Engine implements Connection {
         isConnecting = true;
         sock = null;
 
-        EventManager.callEvent(new ConnectingEvent(server, port), this);
+        fireConnecting(server, port, this);
 
         if (factory != null) {
             try {
@@ -180,18 +177,21 @@ public abstract class Engine implements Connection {
      */
     public abstract void handleLine(String line);
 
-
+    public abstract void fireSendLine(String line, Engine e);
+    
     public void sendLine(String line) {
         if (out != null) {
-            EventManager.callEvent(new LineSendEvent(line), this);
+            fireSendLine(line, this);
             
             out.send(line);
         }
     }
+    
+    public abstract void fireSendLineNow(String line, Engine e);
 
     public void sendLineNow(String line) {
         if (out != null) {
-            EventManager.callEvent(new LineSendEvent(line, true), this);
+            fireSendLineNow(line, this);
             
             out.sendNow(line);
         }

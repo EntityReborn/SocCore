@@ -30,6 +30,8 @@ public abstract class AbstractPacketEvent extends AbstractEvent {
     }
 
     public AbstractPacketEvent(Packet p) {
+        super(p.getBot());
+        
         packet = p;
         String name = p.getSender();
         
@@ -40,10 +42,6 @@ public abstract class AbstractPacketEvent extends AbstractEvent {
                 sender = p.getBot().getChannel(name);
             }
         }
-    }
-
-    public SocBot getBot() {
-        return packet.getBot();
     }
 
     public Packet getPacket() {

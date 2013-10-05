@@ -32,16 +32,12 @@ import me.entityreborn.socbot.events.HandlerList;
  */
 public class DisconnectedEvent extends AbstractEvent {
     private static final HandlerList handlers = new HandlerList(AbstractEvent.getHandlerList());
-    private final SocBot bot;
     private final boolean clean;
     
     public DisconnectedEvent(boolean wasClean, SocBot bot) {
-        this.bot = bot;
+        super(bot);
+        
         this.clean = wasClean;
-    }
-    
-    public SocBot getBot() {
-        return bot;
     }
     
     public boolean wasClean() {

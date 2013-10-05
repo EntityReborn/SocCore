@@ -75,6 +75,7 @@ public class Core extends Engine implements SocBot, Listener {
 
     /**
      * Create a new instance of Core
+     * @param identifier
      */
     public Core(String identifier) {
         id = identifier;
@@ -409,5 +410,20 @@ public class Core extends Engine implements SocBot, Listener {
     @Override
     protected void fireConnected(String server, int port, Engine e) {
         EventManager.callEvent(new ConnectedEvent(server, port, this), e);
+    }
+
+    @Override
+    protected void fireConnecting(String server, int port, Engine e) {
+        EventManager.callEvent(new ConnectingEvent(this, server, port), e);
+    }
+
+    @Override
+    public void fireSendLine(String line, Engine e) {
+        EventManager.callEvent(new LineSendEvent(this, line), this);
+    }
+
+    @Override
+    public void fireSendLineNow(String line, Engine e) {
+        EventManager.callEvent(new LineSendEvent(this, line), this);
     }
 }
