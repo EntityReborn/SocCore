@@ -43,29 +43,30 @@ public enum Colors {
     BLUE("12"),
     VIOLET("13"),
     DARKGREY("14"),
-    LIGHTGREY("15");
-    
+    LIGHTGREY("15"),
+    DEFAULT("");
+
     String foreground;
     Colors background;
-    
+
     private Colors(String i) {
         foreground = i;
     }
-    
+
     public String value() {
         return foreground;
     }
-    
+
     public Colors setBackground(Colors col) {
         background = col;
-        
+
         return this;
     }
-    
+
     public Colors setBackground(String col) {
         return setBackground(col.toUpperCase());
     }
-    
+
     @Override
     public String toString() {
         if (background != null) {
@@ -73,5 +74,11 @@ public enum Colors {
         } else {
             return "\u0003" + value();
         }
+    }
+
+    public static String removeAll(String line) {
+        line = line.replaceAll("\u0003[0-15](,[0-15])?", line);
+
+        return line;
     }
 }

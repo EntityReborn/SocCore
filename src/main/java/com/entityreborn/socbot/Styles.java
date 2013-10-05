@@ -32,17 +32,30 @@ public enum Styles {
     ITALIC("\u0009"),
     RESET("\u000f"),
     STRIKETHRU("\0013"),
-    UNDERLINE("\u0015"),
-    REVERSE("\u0016");
-    
+    REVERSE("\u0016"),
+    UNDERLINE("\u001f");
+
     String value;
+
     private Styles(String s) {
         value = s;
     }
-    
+
     @Override
     public String toString() {
         return value;
     }
-    
+
+    public static String removeAll(String line) {
+        line = line.replaceAll("\u0002", "");
+        line = line.replaceAll("\u0009", "");
+        line = line.replaceAll("\u000f", "");
+        line = line.replaceAll("\u0013", "");
+        line = line.replaceAll("\u0015", ""); // Alternate underline.
+        line = line.replaceAll("\u0016", "");
+        line = line.replaceAll("\u001f", "");
+
+        return line;
+    }
+
 }
