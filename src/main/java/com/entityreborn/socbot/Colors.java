@@ -64,11 +64,10 @@ public enum Colors {
     }
 
     public Colors setBackground(String col) {
-        return setBackground(col.toUpperCase());
+        return setBackground(Colors.valueOf(col.toUpperCase()));
     }
 
-    @Override
-    public String toString() {
+    public String toColor() {
         if (background != null) {
             return "\u0003" + value() + "," + background.value();
         } else {
