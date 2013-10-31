@@ -23,7 +23,6 @@
  */
 package com.entityreborn.socbot;
 
-import com.entityreborn.socbot.Connection;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;

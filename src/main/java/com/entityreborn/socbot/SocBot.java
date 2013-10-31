@@ -23,26 +23,7 @@
  */
 package com.entityreborn.socbot;
 
-import com.entityreborn.socbot.events.AbstractEvent;
-import com.entityreborn.socbot.events.WelcomeEvent;
-import com.entityreborn.socbot.events.QuitEvent;
-import com.entityreborn.socbot.events.ConnectedEvent;
-import com.entityreborn.socbot.events.NoticeEvent;
-import com.entityreborn.socbot.events.PrivmsgEvent;
-import com.entityreborn.socbot.events.CTCPEvent;
-import com.entityreborn.socbot.events.LineSendEvent;
-import com.entityreborn.socbot.events.ChannelUserModeChangeEvent;
-import com.entityreborn.socbot.events.CTCPReplyEvent;
-import com.entityreborn.socbot.events.JoinEvent;
-import com.entityreborn.socbot.events.ModeChangeEvent;
-import com.entityreborn.socbot.events.KickEvent;
-import com.entityreborn.socbot.events.NumericEvent;
-import com.entityreborn.socbot.events.DisconnectedEvent;
-import com.entityreborn.socbot.events.PartEvent;
-import com.entityreborn.socbot.events.PacketReceivedEvent;
-import com.entityreborn.socbot.events.NickEvent;
-import com.entityreborn.socbot.events.ErrorEvent;
-import com.entityreborn.socbot.events.ConnectingEvent;
+import com.entityreborn.socbot.events.*;
 import com.entityreborn.socbot.eventsystem.EventManager;
 import com.entityreborn.socbot.eventsystem.Listener;
 import java.util.HashMap;
@@ -71,7 +52,7 @@ public class SocBot extends Engine implements Listener {
         String v = null;
 
         if (p == null) {
-            p = Package.getPackage("me.entityreborn.socbot.core");
+            p = Package.getPackage("com.entityreborn.socbot");
         }
 
         if (p != null) {
