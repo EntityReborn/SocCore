@@ -178,6 +178,16 @@ public class TestEventParsing implements Listener {
         assertEquals(e.getMessage(), "Test!");
         assertEquals(e.getSender().getName(), "tester");
         assertEquals(e.getTarget().getName(), "#testing");
+        
+        bot.handleLine(":tester!test@test.com NICK Bob");
+        bot.handleLine(":Bob!test@test.com PRIVMSG #testing :Test!");
+
+        assertTrue(event instanceof PrivmsgEvent);
+        e = (PrivmsgEvent) event;
+
+        assertEquals(e.getMessage(), "Test!");
+        assertEquals(e.getSender().getName(), "Bob");
+        assertEquals(e.getTarget().getName(), "#testing");
     }
 
     @Test

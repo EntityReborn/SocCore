@@ -28,16 +28,16 @@ package com.entityreborn.socbot;
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public enum Colors {
-    WHITE("0"),
-    BLACK("1"),
-    DARKBLUE("2"),
-    DARKGREEN("3"),
-    RED("4"),
-    DARKRED("5"),
-    DARKVIOLET("6"),
-    ORANGE("7"),
-    YELLOW("8"),
-    LIGHTGREEN("9"),
+    WHITE("00"),
+    BLACK("01"),
+    DARKBLUE("02"),
+    DARKGREEN("03"),
+    RED("04"),
+    DARKRED("05"),
+    DARKVIOLET("06"),
+    ORANGE("07"),
+    YELLOW("08"),
+    LIGHTGREEN("09"),
     CYAN("10"),
     LIGHTCYAN("11"),
     BLUE("12"),
@@ -76,7 +76,9 @@ public enum Colors {
     }
 
     public static String removeAll(String line) {
-        line = line.replaceAll("\u0003[0-15](,[0-15])?", line);
+        String color = "(1[0-5]|0?[0-9])";
+        
+        line = line.replaceAll("\u0003" + color + "(," + color + ")?", "");
 
         return line;
     }
