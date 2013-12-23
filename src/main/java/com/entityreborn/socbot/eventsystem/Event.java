@@ -60,7 +60,7 @@ public abstract class Event {
      *
      * @param cancelled True to cancel event
      */
-    protected void setCancelled(boolean cancelled) {
+    public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
