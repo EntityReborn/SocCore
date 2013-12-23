@@ -23,6 +23,10 @@
  */
 package com.entityreborn.socbot;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Jason Unger <entityreborn@gmail.com>
@@ -49,12 +53,33 @@ public abstract class Target {
         }
     }
 
-    SocBot bot;
-    String modes;
+    protected final SocBot bot;
+    private String modes;
+    private final Map<String, Object> metadata = new HashMap<String, Object>();
 
     public Target(SocBot b) {
         bot = b;
         modes = "";
+    }
+    
+    public boolean hasMetaData(String id) {
+        return metadata.containsKey(id.toLowerCase());
+    }
+    
+    public Object getMetaData(String id) {
+        return metadata.get(id.toLowerCase());
+    }
+    
+    public void setMetaData(String id, Object data) {
+        metadata.put(id.toLowerCase(), data);
+    }
+    
+    public Object remMetaData(String id) {
+        return metadata.remove(id.toLowerCase());
+    }
+    
+    public Map<String, Object> getMetaData() {
+        return Collections.unmodifiableMap(metadata);
     }
 
     public abstract String getName();

@@ -23,8 +23,8 @@
  */
 package com.entityreborn.socbot;
 
-import java.util.Set;
 import com.entityreborn.socbot.eventsystem.Listener;
+import java.util.Set;
 
 /**
  *
