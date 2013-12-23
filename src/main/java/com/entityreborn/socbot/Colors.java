@@ -82,4 +82,9 @@ public enum Colors {
 
         return line;
     }
+    
+    @Override
+    public String toString() {
+        return toColor();
+    }
 }
