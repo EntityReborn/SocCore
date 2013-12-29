@@ -26,8 +26,12 @@ public class CTCPEvent extends TargetedEvent {
         String[] parts = message.split(" ", 2);
         
         type = parts[0].toUpperCase();
-
-        p.setMessage(parts[1]);
+        
+        if (parts.length > 1) {
+            p.setMessage(parts[1]);
+        } else {
+            p.setMessage("");
+        }
     }
 
     public String getType() {
