@@ -23,13 +23,32 @@
  */
 package com.entityreborn.socbot;
 
-import com.entityreborn.socbot.events.*;
+import com.entityreborn.socbot.Numerics.Numeric;
+import com.entityreborn.socbot.events.AbstractEvent;
+import com.entityreborn.socbot.events.CTCPEvent;
+import com.entityreborn.socbot.events.CTCPReplyEvent;
+import com.entityreborn.socbot.events.ChannelUserModeChangeEvent;
+import com.entityreborn.socbot.events.ConnectedEvent;
+import com.entityreborn.socbot.events.ConnectingEvent;
+import com.entityreborn.socbot.events.DisconnectedEvent;
+import com.entityreborn.socbot.events.ErrorEvent;
+import com.entityreborn.socbot.events.JoinEvent;
+import com.entityreborn.socbot.events.KickEvent;
+import com.entityreborn.socbot.events.LineSendEvent;
+import com.entityreborn.socbot.events.ModeChangeEvent;
+import com.entityreborn.socbot.events.NickEvent;
+import com.entityreborn.socbot.events.NoticeEvent;
+import com.entityreborn.socbot.events.NumericEvent;
+import com.entityreborn.socbot.events.PacketReceivedEvent;
+import com.entityreborn.socbot.events.PartEvent;
+import com.entityreborn.socbot.events.PrivmsgEvent;
+import com.entityreborn.socbot.events.QuitEvent;
+import com.entityreborn.socbot.events.WelcomeEvent;
 import com.entityreborn.socbot.eventsystem.EventManager;
 import com.entityreborn.socbot.eventsystem.Listener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import com.entityreborn.socbot.Numerics.Numeric;
 
 /**
  * Implementation for non-connection-specific type stuff. Subclasses for the bot
@@ -116,8 +135,12 @@ public class SocBot extends Engine implements Listener {
         }
 
         // Lets clean up the name to get the actual nick
-        // instead of the full hostmask
-        if (nick.contains("!")) {
+        // instead of the full hostmask.
+        // We check for the nick starting with ! because 
+        // NAM_REPLY might return nicks starting with !
+        // depending on the PREFIX settings for the server,
+        // which is a case that doesn't apply here.
+        if (nick.contains("!") && !nick.startsWith("!")) {
             String[] parts = nick.split("!", 2);
             nick = parts[0];
             host = parts[1];

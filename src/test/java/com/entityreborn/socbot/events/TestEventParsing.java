@@ -23,21 +23,22 @@
  */
 package com.entityreborn.socbot.events;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import com.entityreborn.socbot.Numerics.Numeric;
 import com.entityreborn.socbot.Channel;
+import com.entityreborn.socbot.Numerics.Numeric;
 import com.entityreborn.socbot.SocBot;
 import com.entityreborn.socbot.User;
 import com.entityreborn.socbot.eventsystem.EventHandler;
 import com.entityreborn.socbot.eventsystem.EventManager;
 import com.entityreborn.socbot.eventsystem.Listener;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  *
@@ -73,6 +74,40 @@ public class TestEventParsing implements Listener {
     public void after() {
         event = null;
         events = new ArrayList<AbstractEvent>();
+    }
+    
+    @Test
+    public void testAll() {
+        // This test brought to you by CyaNox :)
+        // Actual log from a server, cleansed for public consumpion, except nicks.
+        bot.handleLine(":localhost NOTICE AUTH :*** Looking up your hostname...");
+        bot.handleLine(":localhost NOTICE AUTH :*** Checking Ident");
+        bot.handleLine(":localhost NOTICE AUTH :*** No Ident response");
+        bot.handleLine(":localhost NOTICE AUTH :*** Found your hostname");
+        bot.handleLine(":localhost 001 QT :Welcome to the localhost network QT!~QT@localhost.com");
+        bot.handleLine(":localhost 002 QT :Your host is localhost[@0.0.0.0], running UltimateIRCd(Tsunami)-3.0(02).m5");
+        bot.handleLine(":localhost 003 QT :This server was last (re)started on Mon Oct 4 2010 at 15:19:42 CEST and is located in SomePlace, Somewhere");
+        bot.handleLine(":localhost 004 QT localhost UltimateIRCd(Tsunami)-3.0(02).m5 adhioprxDOPRSWZ acehimnopqstvAKMNORS");
+        bot.handleLine(":localhost 005 QT SAFELIST SILENCE KNOCK FNC WATCH=128 CHANLIMIT=#&:30 MAXLIST=be:60 NICKLEN=30 TOPICLEN=307 KICKLEN=307 CHANNELLEN=32 :are available on this server");
+        bot.handleLine(":localhost 005 QT EXCEPTS=e CHANTYPES=#& PREFIX=(aohv)!@%+ CHANMODES=be,k,l,cimnpqstAKMNORS STATUSMSG=!@%+ NETWORK=localhost CASEMAPPING=ascii STD=i-d :are available on this server");
+        bot.handleLine(":localhost 251 QT :There are 2 users and 3206 invisible on 1 servers");
+        bot.handleLine(":localhost 252 QT 36 :IRC Operators online");
+        bot.handleLine(":localhost 253 QT 6570 :unknown connection(s)");
+        bot.handleLine(":localhost 254 QT 1563 :channels formed");
+        bot.handleLine(":localhost 265 QT :Current local users: 3208 Max: 12760");
+        bot.handleLine(":localhost 266 QT :Current global users: 3208 Max: 12760");
+        bot.handleLine(":localhost NOTICE QT :*** Notice -- motd was last changed at 11/3/2010 13:37");
+        bot.handleLine(":localhost 375 QT :- localhost Message of the Day - ");
+        bot.handleLine(":localhost 376 QT :End of /MOTD.");
+        bot.handleLine(":LagServ!services@localhost PRIVMSG QT :\u0001LAG\u0001");
+        bot.handleLine(":PingServ!services@localhost PRIVMSG QT :\u0001PING BottlerTest PleaseIgnore\u0001");
+        bot.handleLine(":QT MODE QT :+r");
+        bot.handleLine(":QT!~QT@6a63aef.540cf85.localhost.com JOIN :#SomeChannel");
+        bot.handleLine(":localhost 332 QT #SomeChannel :Welcome to the localhost test channel!");
+        bot.handleLine(":localhost 333 QT #SomeChannel Sumguy 1382810142");
+        bot.handleLine(":localhost 353 QT = #SomeChannel :QT Ab +Ceds Agrsv asdf57 sag45 sve375 %Sfves asfveve asfv4r4i svrv4443 !Sves @KJHkfe gdsv47 %dvs_ !zxe333 %Jslkfevi sdfdsasdhf !Lnkdvue` Goober @SDKhje jsvnu %SJHduv @sx sdevsev +sfvrr ");
+        bot.handleLine(":localhost 366 QT #SomeChannel :End of /NAMES list.");
+        bot.handleLine(":ChanServ!services@localhost MODE #SomeChannel +h QT");
     }
 
     @Test
