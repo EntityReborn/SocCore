@@ -57,13 +57,13 @@ import java.util.Set;
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class SocBot extends Engine implements Listener {
-
     static String VERSION = "";
     UserChannelMap userChannelMap;
     Map<String, User> userMap;
     Map<String, Channel> channelMap;
     ServerInfo serverInfo;
     String id;
+    UserFactory userFactory;
 
     static {
         // Get the compiled version info from the manifest.
@@ -97,6 +97,7 @@ public class SocBot extends Engine implements Listener {
         userMap = new HashMap<String, User>();
         channelMap = new HashMap<String, Channel>();
         serverInfo = new ServerInfo(this);
+        userFactory = new SimpleUserFactory();
     }
     
     public String getID() {
@@ -160,7 +161,7 @@ public class SocBot extends Engine implements Listener {
         User u = userMap.get(nick.toLowerCase());
         
         if (u == null && track) {
-            u = new User(nick, this);
+            u = userFactory.createUser(nick, this);
             userMap.put(nick.toLowerCase(), u);
         } else if (u == null) {
             return null;
@@ -209,9 +210,7 @@ public class SocBot extends Engine implements Listener {
                 channel = packet.getMessage();
             }
             
-            if (!channelMap.containsKey(channel.toLowerCase())) {
-                channelMap.put(channel.toLowerCase(), new Channel(channel, this));
-            }
+            trackChannel(channel);
         }
 
         if (packet.getNumeric() != Numeric.UNKNOWN) {
@@ -444,5 +443,25 @@ public class SocBot extends Engine implements Listener {
     @Override
     public void fireSendLineNow(String line, Engine e) {
         EventManager.callEvent(new LineSendEvent(this, line), this);
+    }
+
+    /**
+     * @return the userFactory
+     */
+    public UserFactory getUserFactory() {
+        return userFactory;
+    }
+
+    /**
+     * @param userFactory the userFactory to set
+     */
+    public void setUserFactory(UserFactory userFactory) {
+        this.userFactory = userFactory;
+    }
+    
+    public static class SimpleUserFactory implements UserFactory {
+        public User createUser(String nick, SocBot bot) {
+            return new User(nick, bot);
+        }
     }
 }
