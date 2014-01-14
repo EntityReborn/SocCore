@@ -33,7 +33,7 @@ import java.util.Set;
 public class User extends Target implements Listener {
 
     private String nick;
-    private String lastNick;
+    private volatile String lastNick;
     private String hostmask;
 
     public User(String userline, SocBot b) {
@@ -78,5 +78,29 @@ public class User extends Target implements Listener {
 
     public void setHostmask(String h) {
         hostmask = h;
+    }
+
+    @Override
+    public int hashCode() {
+        return nick.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        final User other = (User) obj;
+        
+        if ((this.nick == null) ? (other.nick != null) : !this.nick.equals(other.nick)) {
+            return false;
+        }
+        
+        return true;
     }
 }

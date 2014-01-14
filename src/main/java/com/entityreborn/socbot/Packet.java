@@ -23,10 +23,10 @@
  */
 package com.entityreborn.socbot;
 
+import com.entityreborn.socbot.Numerics.Numeric;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.entityreborn.socbot.Numerics.Numeric;
 
 /**
  *
@@ -39,20 +39,20 @@ public class Packet {
     private List<String> args;
     private String command;
     private Numeric numeric;
-    private final SocBot bot;
+    private final Engine engine;
     
-    public Packet(String l, SocBot b) {
-        bot = b;
+    public Packet(String l, Engine e) {
+        engine = e;
         originalLine = l;
         
         parse();
     }
     
     public SocBot getBot() {
-        return bot;
+        return (SocBot)engine;
     }
     
-    protected void parse() {
+    protected final void parse() {
         String line = originalLine;
         
         // Get sender if given

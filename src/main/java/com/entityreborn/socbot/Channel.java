@@ -23,10 +23,10 @@
  */
 package com.entityreborn.socbot;
 
+import com.entityreborn.socbot.eventsystem.Listener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import com.entityreborn.socbot.eventsystem.Listener;
 
 /**
  *
@@ -112,4 +112,26 @@ public class Channel extends Target implements Listener {
     public void untrackUser(User user) {
         userModes.remove(user);
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        final Channel other = (Channel) obj;
+        
+        return !((this.name == null) ? (other.name != null) : !this.name.equals(other.name));
+    }
+    
+    
 }

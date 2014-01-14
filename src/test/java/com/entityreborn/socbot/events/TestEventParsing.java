@@ -77,6 +77,24 @@ public class TestEventParsing implements Listener {
     }
     
     @Test
+    public void testUserEquality() {
+        assertEquals(new User("test!test@test.com", null), new User("test!test@test.com", null));
+    }
+    
+    @Test
+    public void testChannelEquality() {
+        assertEquals(new Channel("#test", null), new Channel("#test", null));
+    }
+    
+    @Test
+    public void testNickChange() {
+        bot.handleLine(":localhost 001 " + conf.getNick()
+                + " :Welcome to the LocalHost IRC Network "
+                + conf.getNick() + "__!SocPuppet@localhost.com");
+        assertEquals(bot.getNickname(), conf.getNick() + "__");
+    }
+    
+    @Test
     public void testAll() {
         // This test brought to you by CyaNox :)
         // Actual log from a server, cleansed for public consumpion, except nicks.

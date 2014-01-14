@@ -24,8 +24,8 @@
 package com.entityreborn.socbot;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -48,8 +48,8 @@ public class UserChannelMap {
      * Creates map with default initial size and load factor.
      */
     public UserChannelMap() {
-        userToChannelMappings = new HashMap<User, Set<Channel>>();
-        channelToUserMappings = new HashMap<Channel, Set<User>>();
+        userToChannelMappings = new IdentityHashMap<User, Set<Channel>>();
+        channelToUserMappings = new IdentityHashMap<Channel, Set<User>>();
     }
 
     /**
@@ -58,20 +58,8 @@ public class UserChannelMap {
      * @param initialCapacity
      */
     public UserChannelMap(int initialCapacity) {
-        userToChannelMappings = new HashMap<User, Set<Channel>>(initialCapacity);
-        channelToUserMappings = new HashMap<Channel, Set<User>>(initialCapacity);
-    }
-
-    /**
-     * Creates map with specified initial size and load factor. For more
-     * information about these see {@link HashMap}
-     *
-     * @param initialCapacity
-     * @param loadFactor
-     */
-    public UserChannelMap(int initialCapacity, float loadFactor) {
-        userToChannelMappings = new HashMap<User, Set<Channel>>(initialCapacity, loadFactor);
-        channelToUserMappings = new HashMap<Channel, Set<User>>(initialCapacity, loadFactor);
+        userToChannelMappings = new IdentityHashMap<User, Set<Channel>>(initialCapacity);
+        channelToUserMappings = new IdentityHashMap<Channel, Set<User>>(initialCapacity);
     }
 
     /**
@@ -317,7 +305,7 @@ public class UserChannelMap {
     }
 
     /**
-     * Returns an <tt>Iterator</tt> over every rightt hand mapping in this map.
+     * Returns an <tt>Iterator</tt> over every right hand mapping in this map.
      * In no particular order.
      *
      * @return an iterator over this map

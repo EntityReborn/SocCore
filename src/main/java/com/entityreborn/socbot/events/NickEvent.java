@@ -24,10 +24,6 @@ public class NickEvent extends TargetedEvent {
         return packet.getMessage();
     }
     
-    public String getOldNick() {
-        return packet.getSender();
-    }
-    
     @Override
     public HandlerList getHandlers() {
         return handlers;

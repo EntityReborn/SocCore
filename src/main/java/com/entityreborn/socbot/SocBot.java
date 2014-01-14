@@ -178,14 +178,7 @@ public class SocBot extends Engine implements Listener {
        return getUser(nick, false);
     }
 
-    @Override
-    public void handleLine(String line) {
-        if (line == null || line.trim().isEmpty()) {
-            return;
-        }
-
-        Packet packet = new Packet(line, this);
-
+    public void handlePacket(Packet packet) {
         EventManager.callEvent(new PacketReceivedEvent(packet), this);
 
         if (packet.getNumeric() != Numeric.UNKNOWN) {
@@ -291,8 +284,9 @@ public class SocBot extends Engine implements Listener {
 
             User u = getUser(ne.getSender().getName());
             u.setName(ne.getNewNick());
-
-            userMap.put(ne.getNewNick(), userMap.remove(ne.getOldNick()));
+            
+            userMap.remove(ne.getUser().getLastNick());
+            userMap.put(ne.getNewNick(), u);
 
             evt = ne;
         } else if (command.equals("MODE")) {

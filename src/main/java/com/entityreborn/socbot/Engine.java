@@ -23,6 +23,7 @@
  */
 package com.entityreborn.socbot;
 
+import com.entityreborn.socbot.Numerics.Numeric;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -172,9 +173,27 @@ public abstract class Engine implements Connection {
      * <p>
      * Numeric lines will be sent to handleNumeric.
      * 
-     * @param line the line the bot received.
+     * @param packet the packet the bot received.
      */
-    public abstract void handleLine(String line);
+    public abstract void handlePacket(Packet packet);
+    
+    public final void handleLine(String line) {
+        if (line == null || line.trim().isEmpty()) {
+            return;
+        }
+
+        Packet packet = new Packet(line, this);
+        
+        if (packet.getNumeric() == Numeric.RPL_WELCOME) {
+            // Update our nickname, incase the server changed it.
+            // IE, if connecting to a bouncer.
+            String[] args = packet.getMessage().split(" ");
+            String nick = args[args.length - 1];
+            nickname = nick.split("!")[0];
+        }
+        
+        handlePacket(packet);
+    }
 
     public abstract void fireSendLine(String line, Engine e);
     
