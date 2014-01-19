@@ -37,6 +37,7 @@ import com.entityreborn.socbot.events.KickEvent;
 import com.entityreborn.socbot.events.LineSendEvent;
 import com.entityreborn.socbot.events.ModeChangeEvent;
 import com.entityreborn.socbot.events.NickEvent;
+import com.entityreborn.socbot.events.NickInUseEvent;
 import com.entityreborn.socbot.events.NoticeEvent;
 import com.entityreborn.socbot.events.NumericEvent;
 import com.entityreborn.socbot.events.PacketReceivedEvent;
@@ -366,6 +367,10 @@ public class SocBot extends Engine implements Listener {
                 }
 
                 break;
+                
+            case ERR_NICKNAMEINUSE:
+                return new NickInUseEvent(packet);
+                
             default:
                 return null;
         }
