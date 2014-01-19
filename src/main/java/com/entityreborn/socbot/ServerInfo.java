@@ -23,14 +23,15 @@
  */
 package com.entityreborn.socbot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import com.entityreborn.socbot.events.NumericEvent;
 import com.entityreborn.socbot.eventsystem.EventHandler;
 import com.entityreborn.socbot.eventsystem.EventManager;
 import com.entityreborn.socbot.eventsystem.Listener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -54,30 +55,32 @@ public class ServerInfo implements Listener{
 
     @EventHandler
     public void handleEvent(NumericEvent event) {
-        switch (event.getNumeric()) {
-            case RPL_YOURHOST:
-                yourHost = event.getMessage();
-                break;
-            case RPL_CREATED:
-                created = event.getMessage();
-                break;
-            case RPL_ISUPPORT:
-                for (String parts : event.getPacket().getArgs()) {
-                    if (parts.contains("=")) {
-                        String[] chunk = parts.split("=", 2);
-                        supports.put(chunk[0], chunk[1]);
-                    } else {
-                        supports.put(parts, "");
+        if (event.getNumeric() instanceof BuiltinNumeric) {
+            switch ((BuiltinNumeric)event.getNumeric()) {
+                case RPL_YOURHOST:
+                    yourHost = event.getMessage();
+                    break;
+                case RPL_CREATED:
+                    created = event.getMessage();
+                    break;
+                case RPL_ISUPPORT:
+                    for (String parts : event.getPacket().getArgs()) {
+                        if (parts.contains("=")) {
+                            String[] chunk = parts.split("=", 2);
+                            supports.put(chunk[0], chunk[1]);
+                        } else {
+                            supports.put(parts, "");
+                        }
                     }
-                }
-                break;
-            case RPL_MOTDSTART:
-            case ERR_NOMOTD:
-                motd.clear();
-                break;
-            case RPL_MOTD:
-                motd.add(event.getMessage());
-                break;
+                    break;
+                case RPL_MOTDSTART:
+                case ERR_NOMOTD:
+                    motd.clear();
+                    break;
+                case RPL_MOTD:
+                    motd.add(event.getMessage());
+                    break;
+            }
         }
     }
 

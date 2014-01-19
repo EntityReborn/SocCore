@@ -24,7 +24,7 @@
 package com.entityreborn.socbot.events;
 
 import com.entityreborn.socbot.Channel;
-import com.entityreborn.socbot.Numerics.Numeric;
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import com.entityreborn.socbot.SocBot;
 import com.entityreborn.socbot.User;
 import com.entityreborn.socbot.eventsystem.EventHandler;
@@ -146,8 +146,8 @@ public class TestEventParsing implements Listener {
         assertEquals(we.getServerName(), "localhost");
         assertEquals(we.getMessage(), "Welcome to the LocalHost IRC Network "
                 + we.getBot().getNickname() + "!SocPuppet@localhost.com");
-        assertEquals(we.getPacket().getCommand(), Numeric.RPL_WELCOME.name());
-        assertEquals(we.getPacket().getNumeric(), Numeric.RPL_WELCOME);
+        assertEquals(we.getPacket().getCommand(), BuiltinNumeric.RPL_WELCOME.name());
+        assertEquals(we.getPacket().getNumeric(), BuiltinNumeric.RPL_WELCOME);
     }
 
     @Test
@@ -368,7 +368,7 @@ public class TestEventParsing implements Listener {
         assertTrue(event instanceof NumericEvent);
         NumericEvent e = (NumericEvent) event;
         
-        assertEquals(e.getNumeric(), Numeric.RPL_NAMREPLY);
+        assertEquals(e.getNumeric(), BuiltinNumeric.RPL_NAMREPLY);
         assertEquals(e.getSender().getName(), "localhost");
         assertEquals(e.getTarget().getName(), "Testing");
         

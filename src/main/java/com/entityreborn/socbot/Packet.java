@@ -23,6 +23,7 @@
  */
 package com.entityreborn.socbot;
 
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import com.entityreborn.socbot.Numerics.Numeric;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,8 +79,8 @@ public class Packet {
         
         // If there is a numeric, and it is a known one, use it's name instead
         // if an integer for the command
-        if (numeric != Numeric.UNKNOWN) {
-            command = numeric.name();
+        if (numeric != BuiltinNumeric.UNKNOWN) {
+            command = numeric.getName();
         }
     }
     
@@ -136,8 +137,8 @@ public class Packet {
         
         // Keep the command synched with the numeric if it's 
         // a known numeric
-        if (numeric != Numeric.UNKNOWN) {
-            command = numeric.name();
+        if (numeric != BuiltinNumeric.UNKNOWN) {
+            command = numeric.getName();
         }
     }
 }

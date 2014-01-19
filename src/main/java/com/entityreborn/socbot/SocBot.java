@@ -23,6 +23,8 @@
  */
 package com.entityreborn.socbot;
 
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
+import static com.entityreborn.socbot.Numerics.BuiltinNumeric.RPL_WELCOME;
 import com.entityreborn.socbot.Numerics.Numeric;
 import com.entityreborn.socbot.events.AbstractEvent;
 import com.entityreborn.socbot.events.CTCPEvent;
@@ -182,7 +184,7 @@ public class SocBot extends Engine implements Listener {
     public void handlePacket(Packet packet) {
         EventManager.callEvent(new PacketReceivedEvent(packet), this);
 
-        if (packet.getNumeric() != Numeric.UNKNOWN) {
+        if (packet.getNumeric() != BuiltinNumeric.UNKNOWN) {
             EventManager.callEvent(new NumericEvent(packet), this);
         }
 
@@ -207,7 +209,7 @@ public class SocBot extends Engine implements Listener {
             trackChannel(channel);
         }
 
-        if (packet.getNumeric() != Numeric.UNKNOWN) {
+        if (packet.getNumeric() != BuiltinNumeric.UNKNOWN) {
             evt = handleNumeric(packet);
         } else if (command.equals("JOIN")) {
             JoinEvent jn = new JoinEvent(packet);
@@ -331,48 +333,52 @@ public class SocBot extends Engine implements Listener {
     }
 
     /**
-     * Handle a {@link Numeric} packet that the bot received.
+     * Handle a {@link BuiltinNumeric} packet that the bot received.
      *
      * @param packet the parsed numeric packet.
      * @return an {@link AbstractEvent} to be fired.
      */
     protected AbstractEvent handleNumeric(Packet packet) {
-        Numeric numeric = packet.getNumeric();
+        Numeric num = packet.getNumeric();
+        
+        if (num instanceof BuiltinNumeric) {
+            BuiltinNumeric numeric = (BuiltinNumeric)num;
+            
+            switch (numeric) {
+                case RPL_WELCOME:
+                    return new WelcomeEvent(packet);
 
-        switch (numeric) {
-            case RPL_WELCOME:
-                return new WelcomeEvent(packet);
-                
-            case RPL_TOPIC:
-                String topic = packet.getMessage();
-                
-                getChannel(packet.getArgs().get(0)).setTopic(topic);
-                
-                return null;
+                case RPL_TOPIC:
+                    String topic = packet.getMessage();
 
-            case RPL_NAMREPLY:
-                String[] names = packet.getMessage().split(" ");
-                int last = packet.getArgs().size() - 1;
-                String channelname = packet.getArgs().get(last);
+                    getChannel(packet.getArgs().get(0)).setTopic(topic);
 
-                for (String name : names) {
-                    User user = getUser(name, true);
-                    Channel channel = getChannel(channelname);
-                    channel.trackUser(user);
-                    userChannelMap.add(user, channel);
-                    
-                    if (serverInfo.isPrefixed(name)) {
-                        channel.addUserMode(user, serverInfo.getModeByPrefix(name));
+                    return null;
+
+                case RPL_NAMREPLY:
+                    String[] names = packet.getMessage().split(" ");
+                    int last = packet.getArgs().size() - 1;
+                    String channelname = packet.getArgs().get(last);
+
+                    for (String name : names) {
+                        User user = getUser(name, true);
+                        Channel channel = getChannel(channelname);
+                        channel.trackUser(user);
+                        userChannelMap.add(user, channel);
+
+                        if (serverInfo.isPrefixed(name)) {
+                            channel.addUserMode(user, serverInfo.getModeByPrefix(name));
+                        }
                     }
-                }
 
-                break;
-                
-            case ERR_NICKNAMEINUSE:
-                return new NickInUseEvent(packet);
-                
-            default:
-                return null;
+                    break;
+
+                case ERR_NICKNAMEINUSE:
+                    return new NickInUseEvent(packet);
+
+                default:
+                    return null;
+            }
         }
 
         return null;

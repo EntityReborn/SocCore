@@ -23,7 +23,7 @@
  */
 package com.entityreborn.socbot;
 
-import com.entityreborn.socbot.Numerics.Numeric;
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -187,7 +187,7 @@ public abstract class Engine implements Connection {
 
         Packet packet = new Packet(line, this);
         
-        if (packet.getNumeric() == Numeric.RPL_WELCOME) {
+        if (packet.getNumeric() == BuiltinNumeric.RPL_WELCOME) {
             // Update our nickname, incase the server changed it.
             // IE, if connecting to a bouncer.
             String[] args = packet.getMessage().split(" ");

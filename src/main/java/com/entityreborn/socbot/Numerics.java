@@ -33,9 +33,35 @@ import java.util.HashMap;
  * @author Jason Unger <entityreborn@gmail.com>
  */
 public class Numerics {
+    public interface Numeric {
+        public int getCode();
+        public String getName();
+        public boolean isBuiltin();
+    }
+    
+    public class CustomNumeric implements Numeric {
+        public int code;
+        public String name;
 
-    public enum Numeric {
+        public CustomNumeric(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+        
+        public int getCode() {
+            return code;
+        }
 
+        public String getName() {
+            return name;
+        }
+
+        public final boolean isBuiltin() {
+            return false;
+        }
+    }
+
+    public enum BuiltinNumeric implements Numeric {
         RPL_WELCOME(001),
         RPL_YOURHOST(002),
         RPL_CREATED(003),
@@ -179,179 +205,187 @@ public class Numerics {
 
         int code;
         
-        private Numeric(int code) {
+        private BuiltinNumeric(int code) {
             this.code = code;
         }
         
         public int getCode() {
             return code;
         }
+        
+        public String getName() {
+            return name();
+        }
+
+        public boolean isBuiltin() {
+            return true;
+        }
     }
     
-    static final private HashMap<Integer, Numeric> replies;
+    static final private HashMap<Integer, BuiltinNumeric> replies;
 
     static {
-        replies = new HashMap<Integer, Numeric>();
-        replies.put(001, Numeric.RPL_WELCOME);
-        replies.put(002, Numeric.RPL_YOURHOST);
-        replies.put(003, Numeric.RPL_CREATED);
-        replies.put(004, Numeric.RPL_MYINFO);
-        replies.put(005, Numeric.RPL_ISUPPORT);
-        replies.put(010, Numeric.RPL_BOUNCE);
-        replies.put(302, Numeric.RPL_USERHOST);
-        replies.put(303, Numeric.RPL_ISON);
-        replies.put(301, Numeric.RPL_AWAY);
-        replies.put(305, Numeric.RPL_UNAWAY);
-        replies.put(306, Numeric.RPL_NOWAWAY);
-        replies.put(311, Numeric.RPL_WHOISUSER);
-        replies.put(312, Numeric.RPL_WHOISSERVER);
-        replies.put(313, Numeric.RPL_WHOISOPERATOR);
-        replies.put(317, Numeric.RPL_WHOISIDLE);
-        replies.put(318, Numeric.RPL_ENDOFWHOIS);
-        replies.put(319, Numeric.RPL_WHOISCHANNELS);
-        replies.put(314, Numeric.RPL_WHOWASUSER);
-        replies.put(369, Numeric.RPL_ENDOFWHOWAS);
-        replies.put(321, Numeric.RPL_LISTSTART);
-        replies.put(322, Numeric.RPL_LIST);
-        replies.put(323, Numeric.RPL_LISTEND);
-        replies.put(325, Numeric.RPL_UNIQOPIS);
-        replies.put(324, Numeric.RPL_CHANNELMODEIS);
-        replies.put(331, Numeric.RPL_NOTOPIC);
-        replies.put(332, Numeric.RPL_TOPIC);
-        replies.put(341, Numeric.RPL_INVITING);
-        replies.put(342, Numeric.RPL_SUMMONING);
-        replies.put(346, Numeric.RPL_INVITELIST);
-        replies.put(347, Numeric.RPL_ENDOFINVITELIST);
-        replies.put(348, Numeric.RPL_EXCEPTLIST);
-        replies.put(349, Numeric.RPL_ENDOFEXCEPTLIST);
-        replies.put(351, Numeric.RPL_VERSION);
-        replies.put(352, Numeric.RPL_WHOREPLY);
-        replies.put(315, Numeric.RPL_ENDOFWHO);
-        replies.put(353, Numeric.RPL_NAMREPLY);
-        replies.put(366, Numeric.RPL_ENDOFNAMES);
-        replies.put(364, Numeric.RPL_LINKS);
-        replies.put(365, Numeric.RPL_ENDOFLINKS);
-        replies.put(367, Numeric.RPL_BANLIST);
-        replies.put(368, Numeric.RPL_ENDOFBANLIST);
-        replies.put(371, Numeric.RPL_INFO);
-        replies.put(374, Numeric.RPL_ENDOFINFO);
-        replies.put(375, Numeric.RPL_MOTDSTART);
-        replies.put(372, Numeric.RPL_MOTD);
-        replies.put(376, Numeric.RPL_ENDOFMOTD);
-        replies.put(381, Numeric.RPL_YOUREOPER);
-        replies.put(382, Numeric.RPL_REHASHING);
-        replies.put(383, Numeric.RPL_YOURESERVICE);
-        replies.put(391, Numeric.RPL_TIME);
-        replies.put(392, Numeric.RPL_USERSSTART);
-        replies.put(393, Numeric.RPL_USERS);
-        replies.put(394, Numeric.RPL_ENDOFUSERS);
-        replies.put(395, Numeric.RPL_NOUSERS);
-        replies.put(200, Numeric.RPL_TRACELINK);
-        replies.put(201, Numeric.RPL_TRACECONNECTING);
-        replies.put(202, Numeric.RPL_TRACEHANDSHAKE);
-        replies.put(203, Numeric.RPL_TRACEUNKNOWN);
-        replies.put(204, Numeric.RPL_TRACEOPERATOR);
-        replies.put(205, Numeric.RPL_TRACEUSER);
-        replies.put(206, Numeric.RPL_TRACESERVER);
-        replies.put(207, Numeric.RPL_TRACESERVICE);
-        replies.put(208, Numeric.RPL_TRACENEWTYPE);
-        replies.put(209, Numeric.RPL_TRACECLASS);
-        replies.put(210, Numeric.RPL_TRACERECONNECT);
-        replies.put(261, Numeric.RPL_TRACELOG);
-        replies.put(262, Numeric.RPL_TRACEEND);
-        replies.put(211, Numeric.RPL_STATSLINKINFO);
-        replies.put(212, Numeric.RPL_STATSCOMMANDS);
-        replies.put(219, Numeric.RPL_ENDOFSTATS);
-        replies.put(242, Numeric.RPL_STATSUPTIME);
-        replies.put(243, Numeric.RPL_STATSOLINE);
-        replies.put(221, Numeric.RPL_UMODEIS);
-        replies.put(234, Numeric.RPL_SERVLIST);
-        replies.put(235, Numeric.RPL_SERVLISTEND);
-        replies.put(251, Numeric.RPL_LUSERCLIENT);
-        replies.put(252, Numeric.RPL_LUSEROP);
-        replies.put(253, Numeric.RPL_LUSERUNKNOWN);
-        replies.put(254, Numeric.RPL_LUSERCHANNELS);
-        replies.put(255, Numeric.RPL_LUSERME);
-        replies.put(256, Numeric.RPL_ADMINME);
-        replies.put(257, Numeric.RPL_ADMINLOC1);
-        replies.put(258, Numeric.RPL_ADMINLOC2);
-        replies.put(259, Numeric.RPL_ADMINEMAIL);
-        replies.put(263, Numeric.RPL_TRYAGAIN);
-        replies.put(401, Numeric.ERR_NOSUCHNICK);
-        replies.put(402, Numeric.ERR_NOSUCHSERVER);
-        replies.put(403, Numeric.ERR_NOSUCHCHANNEL);
-        replies.put(404, Numeric.ERR_CANNOTSENDTOCHAN);
-        replies.put(405, Numeric.ERR_TOOMANYCHANNELS);
-        replies.put(406, Numeric.ERR_WASNOSUCHNICK);
-        replies.put(407, Numeric.ERR_TOOMANYTARGETS);
-        replies.put(408, Numeric.ERR_NOSUCHSERVICE);
-        replies.put(409, Numeric.ERR_NOORIGIN);
-        replies.put(411, Numeric.ERR_NORECIPIENT);
-        replies.put(412, Numeric.ERR_NOTEXTTOSEND);
-        replies.put(413, Numeric.ERR_NOTOPLEVEL);
-        replies.put(414, Numeric.ERR_WILDTOPLEVEL);
-        replies.put(415, Numeric.ERR_BADMASK);
-        replies.put(421, Numeric.ERR_UNKNOWNCOMMAND);
-        replies.put(422, Numeric.ERR_NOMOTD);
-        replies.put(423, Numeric.ERR_NOADMININFO);
-        replies.put(424, Numeric.ERR_FILEERROR);
-        replies.put(431, Numeric.ERR_NONICKNAMEGIVEN);
-        replies.put(432, Numeric.ERR_ERRONEUSNICKNAME);
-        replies.put(433, Numeric.ERR_NICKNAMEINUSE);
-        replies.put(436, Numeric.ERR_NICKCOLLISION);
-        replies.put(437, Numeric.ERR_UNAVAILRESOURCE);
-        replies.put(441, Numeric.ERR_USERNOTINCHANNEL);
-        replies.put(442, Numeric.ERR_NOTONCHANNEL);
-        replies.put(443, Numeric.ERR_USERONCHANNEL);
-        replies.put(444, Numeric.ERR_NOLOGIN);
-        replies.put(445, Numeric.ERR_SUMMONDISABLED);
-        replies.put(446, Numeric.ERR_USERSDISABLED);
-        replies.put(451, Numeric.ERR_NOTREGISTERED);
-        replies.put(461, Numeric.ERR_NEEDMOREPARAMS);
-        replies.put(462, Numeric.ERR_ALREADYREGISTRED);
-        replies.put(463, Numeric.ERR_NOPERMFORHOST);
-        replies.put(464, Numeric.ERR_PASSWDMISMATCH);
-        replies.put(465, Numeric.ERR_YOUREBANNEDCREEP);
-        replies.put(466, Numeric.ERR_YOUWILLBEBANNED);
-        replies.put(467, Numeric.ERR_KEYSET);
-        replies.put(471, Numeric.ERR_CHANNELISFULL);
-        replies.put(472, Numeric.ERR_UNKNOWNMODE);
-        replies.put(473, Numeric.ERR_INVITEONLYCHAN);
-        replies.put(474, Numeric.ERR_BANNEDFROMCHAN);
-        replies.put(475, Numeric.ERR_BADCHANNELKEY);
-        replies.put(476, Numeric.ERR_BADCHANMASK);
-        replies.put(477, Numeric.ERR_NOCHANMODES);
-        replies.put(478, Numeric.ERR_BANLISTFULL);
-        replies.put(481, Numeric.ERR_NOPRIVILEGES);
-        replies.put(482, Numeric.ERR_CHANOPRIVSNEEDED);
-        replies.put(483, Numeric.ERR_CANTKILLSERVER);
-        replies.put(484, Numeric.ERR_RESTRICTED);
-        replies.put(485, Numeric.ERR_UNIQOPPRIVSNEEDED);
-        replies.put(491, Numeric.ERR_NOOPERHOST);
-        replies.put(492, Numeric.ERR_NOSERVICEHOST);
-        replies.put(501, Numeric.ERR_UMODEUNKNOWNFLAG);
-        replies.put(502, Numeric.ERR_USERSDONTMATCH);
+        replies = new HashMap<Integer, BuiltinNumeric>();
+        replies.put(001, BuiltinNumeric.RPL_WELCOME);
+        replies.put(002, BuiltinNumeric.RPL_YOURHOST);
+        replies.put(003, BuiltinNumeric.RPL_CREATED);
+        replies.put(004, BuiltinNumeric.RPL_MYINFO);
+        replies.put(005, BuiltinNumeric.RPL_ISUPPORT);
+        replies.put(010, BuiltinNumeric.RPL_BOUNCE);
+        replies.put(302, BuiltinNumeric.RPL_USERHOST);
+        replies.put(303, BuiltinNumeric.RPL_ISON);
+        replies.put(301, BuiltinNumeric.RPL_AWAY);
+        replies.put(305, BuiltinNumeric.RPL_UNAWAY);
+        replies.put(306, BuiltinNumeric.RPL_NOWAWAY);
+        replies.put(311, BuiltinNumeric.RPL_WHOISUSER);
+        replies.put(312, BuiltinNumeric.RPL_WHOISSERVER);
+        replies.put(313, BuiltinNumeric.RPL_WHOISOPERATOR);
+        replies.put(317, BuiltinNumeric.RPL_WHOISIDLE);
+        replies.put(318, BuiltinNumeric.RPL_ENDOFWHOIS);
+        replies.put(319, BuiltinNumeric.RPL_WHOISCHANNELS);
+        replies.put(314, BuiltinNumeric.RPL_WHOWASUSER);
+        replies.put(369, BuiltinNumeric.RPL_ENDOFWHOWAS);
+        replies.put(321, BuiltinNumeric.RPL_LISTSTART);
+        replies.put(322, BuiltinNumeric.RPL_LIST);
+        replies.put(323, BuiltinNumeric.RPL_LISTEND);
+        replies.put(325, BuiltinNumeric.RPL_UNIQOPIS);
+        replies.put(324, BuiltinNumeric.RPL_CHANNELMODEIS);
+        replies.put(331, BuiltinNumeric.RPL_NOTOPIC);
+        replies.put(332, BuiltinNumeric.RPL_TOPIC);
+        replies.put(341, BuiltinNumeric.RPL_INVITING);
+        replies.put(342, BuiltinNumeric.RPL_SUMMONING);
+        replies.put(346, BuiltinNumeric.RPL_INVITELIST);
+        replies.put(347, BuiltinNumeric.RPL_ENDOFINVITELIST);
+        replies.put(348, BuiltinNumeric.RPL_EXCEPTLIST);
+        replies.put(349, BuiltinNumeric.RPL_ENDOFEXCEPTLIST);
+        replies.put(351, BuiltinNumeric.RPL_VERSION);
+        replies.put(352, BuiltinNumeric.RPL_WHOREPLY);
+        replies.put(315, BuiltinNumeric.RPL_ENDOFWHO);
+        replies.put(353, BuiltinNumeric.RPL_NAMREPLY);
+        replies.put(366, BuiltinNumeric.RPL_ENDOFNAMES);
+        replies.put(364, BuiltinNumeric.RPL_LINKS);
+        replies.put(365, BuiltinNumeric.RPL_ENDOFLINKS);
+        replies.put(367, BuiltinNumeric.RPL_BANLIST);
+        replies.put(368, BuiltinNumeric.RPL_ENDOFBANLIST);
+        replies.put(371, BuiltinNumeric.RPL_INFO);
+        replies.put(374, BuiltinNumeric.RPL_ENDOFINFO);
+        replies.put(375, BuiltinNumeric.RPL_MOTDSTART);
+        replies.put(372, BuiltinNumeric.RPL_MOTD);
+        replies.put(376, BuiltinNumeric.RPL_ENDOFMOTD);
+        replies.put(381, BuiltinNumeric.RPL_YOUREOPER);
+        replies.put(382, BuiltinNumeric.RPL_REHASHING);
+        replies.put(383, BuiltinNumeric.RPL_YOURESERVICE);
+        replies.put(391, BuiltinNumeric.RPL_TIME);
+        replies.put(392, BuiltinNumeric.RPL_USERSSTART);
+        replies.put(393, BuiltinNumeric.RPL_USERS);
+        replies.put(394, BuiltinNumeric.RPL_ENDOFUSERS);
+        replies.put(395, BuiltinNumeric.RPL_NOUSERS);
+        replies.put(200, BuiltinNumeric.RPL_TRACELINK);
+        replies.put(201, BuiltinNumeric.RPL_TRACECONNECTING);
+        replies.put(202, BuiltinNumeric.RPL_TRACEHANDSHAKE);
+        replies.put(203, BuiltinNumeric.RPL_TRACEUNKNOWN);
+        replies.put(204, BuiltinNumeric.RPL_TRACEOPERATOR);
+        replies.put(205, BuiltinNumeric.RPL_TRACEUSER);
+        replies.put(206, BuiltinNumeric.RPL_TRACESERVER);
+        replies.put(207, BuiltinNumeric.RPL_TRACESERVICE);
+        replies.put(208, BuiltinNumeric.RPL_TRACENEWTYPE);
+        replies.put(209, BuiltinNumeric.RPL_TRACECLASS);
+        replies.put(210, BuiltinNumeric.RPL_TRACERECONNECT);
+        replies.put(261, BuiltinNumeric.RPL_TRACELOG);
+        replies.put(262, BuiltinNumeric.RPL_TRACEEND);
+        replies.put(211, BuiltinNumeric.RPL_STATSLINKINFO);
+        replies.put(212, BuiltinNumeric.RPL_STATSCOMMANDS);
+        replies.put(219, BuiltinNumeric.RPL_ENDOFSTATS);
+        replies.put(242, BuiltinNumeric.RPL_STATSUPTIME);
+        replies.put(243, BuiltinNumeric.RPL_STATSOLINE);
+        replies.put(221, BuiltinNumeric.RPL_UMODEIS);
+        replies.put(234, BuiltinNumeric.RPL_SERVLIST);
+        replies.put(235, BuiltinNumeric.RPL_SERVLISTEND);
+        replies.put(251, BuiltinNumeric.RPL_LUSERCLIENT);
+        replies.put(252, BuiltinNumeric.RPL_LUSEROP);
+        replies.put(253, BuiltinNumeric.RPL_LUSERUNKNOWN);
+        replies.put(254, BuiltinNumeric.RPL_LUSERCHANNELS);
+        replies.put(255, BuiltinNumeric.RPL_LUSERME);
+        replies.put(256, BuiltinNumeric.RPL_ADMINME);
+        replies.put(257, BuiltinNumeric.RPL_ADMINLOC1);
+        replies.put(258, BuiltinNumeric.RPL_ADMINLOC2);
+        replies.put(259, BuiltinNumeric.RPL_ADMINEMAIL);
+        replies.put(263, BuiltinNumeric.RPL_TRYAGAIN);
+        replies.put(401, BuiltinNumeric.ERR_NOSUCHNICK);
+        replies.put(402, BuiltinNumeric.ERR_NOSUCHSERVER);
+        replies.put(403, BuiltinNumeric.ERR_NOSUCHCHANNEL);
+        replies.put(404, BuiltinNumeric.ERR_CANNOTSENDTOCHAN);
+        replies.put(405, BuiltinNumeric.ERR_TOOMANYCHANNELS);
+        replies.put(406, BuiltinNumeric.ERR_WASNOSUCHNICK);
+        replies.put(407, BuiltinNumeric.ERR_TOOMANYTARGETS);
+        replies.put(408, BuiltinNumeric.ERR_NOSUCHSERVICE);
+        replies.put(409, BuiltinNumeric.ERR_NOORIGIN);
+        replies.put(411, BuiltinNumeric.ERR_NORECIPIENT);
+        replies.put(412, BuiltinNumeric.ERR_NOTEXTTOSEND);
+        replies.put(413, BuiltinNumeric.ERR_NOTOPLEVEL);
+        replies.put(414, BuiltinNumeric.ERR_WILDTOPLEVEL);
+        replies.put(415, BuiltinNumeric.ERR_BADMASK);
+        replies.put(421, BuiltinNumeric.ERR_UNKNOWNCOMMAND);
+        replies.put(422, BuiltinNumeric.ERR_NOMOTD);
+        replies.put(423, BuiltinNumeric.ERR_NOADMININFO);
+        replies.put(424, BuiltinNumeric.ERR_FILEERROR);
+        replies.put(431, BuiltinNumeric.ERR_NONICKNAMEGIVEN);
+        replies.put(432, BuiltinNumeric.ERR_ERRONEUSNICKNAME);
+        replies.put(433, BuiltinNumeric.ERR_NICKNAMEINUSE);
+        replies.put(436, BuiltinNumeric.ERR_NICKCOLLISION);
+        replies.put(437, BuiltinNumeric.ERR_UNAVAILRESOURCE);
+        replies.put(441, BuiltinNumeric.ERR_USERNOTINCHANNEL);
+        replies.put(442, BuiltinNumeric.ERR_NOTONCHANNEL);
+        replies.put(443, BuiltinNumeric.ERR_USERONCHANNEL);
+        replies.put(444, BuiltinNumeric.ERR_NOLOGIN);
+        replies.put(445, BuiltinNumeric.ERR_SUMMONDISABLED);
+        replies.put(446, BuiltinNumeric.ERR_USERSDISABLED);
+        replies.put(451, BuiltinNumeric.ERR_NOTREGISTERED);
+        replies.put(461, BuiltinNumeric.ERR_NEEDMOREPARAMS);
+        replies.put(462, BuiltinNumeric.ERR_ALREADYREGISTRED);
+        replies.put(463, BuiltinNumeric.ERR_NOPERMFORHOST);
+        replies.put(464, BuiltinNumeric.ERR_PASSWDMISMATCH);
+        replies.put(465, BuiltinNumeric.ERR_YOUREBANNEDCREEP);
+        replies.put(466, BuiltinNumeric.ERR_YOUWILLBEBANNED);
+        replies.put(467, BuiltinNumeric.ERR_KEYSET);
+        replies.put(471, BuiltinNumeric.ERR_CHANNELISFULL);
+        replies.put(472, BuiltinNumeric.ERR_UNKNOWNMODE);
+        replies.put(473, BuiltinNumeric.ERR_INVITEONLYCHAN);
+        replies.put(474, BuiltinNumeric.ERR_BANNEDFROMCHAN);
+        replies.put(475, BuiltinNumeric.ERR_BADCHANNELKEY);
+        replies.put(476, BuiltinNumeric.ERR_BADCHANMASK);
+        replies.put(477, BuiltinNumeric.ERR_NOCHANMODES);
+        replies.put(478, BuiltinNumeric.ERR_BANLISTFULL);
+        replies.put(481, BuiltinNumeric.ERR_NOPRIVILEGES);
+        replies.put(482, BuiltinNumeric.ERR_CHANOPRIVSNEEDED);
+        replies.put(483, BuiltinNumeric.ERR_CANTKILLSERVER);
+        replies.put(484, BuiltinNumeric.ERR_RESTRICTED);
+        replies.put(485, BuiltinNumeric.ERR_UNIQOPPRIVSNEEDED);
+        replies.put(491, BuiltinNumeric.ERR_NOOPERHOST);
+        replies.put(492, BuiltinNumeric.ERR_NOSERVICEHOST);
+        replies.put(501, BuiltinNumeric.ERR_UMODEUNKNOWNFLAG);
+        replies.put(502, BuiltinNumeric.ERR_USERSDONTMATCH);
     }
 
-    public static Numeric fromInt(int i) {
+    public static BuiltinNumeric fromInt(int i) {
         if (replies.containsKey(i)) {
             return replies.get(i);
         }
 
-        return Numeric.UNKNOWN;
+        return BuiltinNumeric.UNKNOWN;
     }
     
-    public static Numeric fromString(String s) {
+    public static BuiltinNumeric fromString(String s) {
         int code;
         
         try {
             code = Integer.valueOf(s).intValue();
         } catch (NumberFormatException e) {
-            return Numeric.UNKNOWN;
+            return BuiltinNumeric.UNKNOWN;
         }
         
         if (!replies.containsKey(code)) {
-            return Numeric.UNKNOWN;
+            return BuiltinNumeric.UNKNOWN;
         }
         
         return replies.get(code);

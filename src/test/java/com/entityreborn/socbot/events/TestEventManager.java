@@ -30,7 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import com.entityreborn.socbot.Numerics.Numeric;
+import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import com.entityreborn.socbot.Packet;
 import com.entityreborn.socbot.SocBot;
 import com.entityreborn.socbot.eventsystem.EventHandler;
@@ -83,8 +83,8 @@ public class TestEventManager implements Listener {
                 assertEquals(we.getServerName(), "localhost");
                 assertEquals(we.getMessage(), "Welcome to the LocalHost IRC Network "
                         + we.getBot().getNickname() + "!SocPuppet@localhost.com");
-                assertEquals(we.getPacket().getCommand(), Numeric.RPL_WELCOME.name());
-                assertEquals(we.getPacket().getNumeric(), Numeric.RPL_WELCOME);
+                assertEquals(we.getPacket().getCommand(), BuiltinNumeric.RPL_WELCOME.name());
+                assertEquals(we.getPacket().getNumeric(), BuiltinNumeric.RPL_WELCOME);
                 
                 welcome++;
                 
@@ -96,8 +96,8 @@ public class TestEventManager implements Listener {
                         ":localhost 001 " + botname
                         + " :Welcome to the LocalHost IRC Network "
                         + botname + "!SocPuppet@localhost.com");
-                assertEquals(p.getCommand(), Numeric.RPL_WELCOME.name());
-                assertEquals(p.getNumeric(), Numeric.RPL_WELCOME);
+                assertEquals(p.getCommand(), BuiltinNumeric.RPL_WELCOME.name());
+                assertEquals(p.getNumeric(), BuiltinNumeric.RPL_WELCOME);
                 assertEquals(p.getSender(), "localhost");
                 assertEquals(p.getMessage(), "Welcome to the LocalHost IRC Network "
                         + botname + "!SocPuppet@localhost.com");
