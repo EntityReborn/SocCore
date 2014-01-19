@@ -39,7 +39,7 @@ public class Numerics {
         public boolean isBuiltin();
     }
     
-    public class CustomNumeric implements Numeric {
+    public static class CustomNumeric implements Numeric {
         public int code;
         public String name;
 
