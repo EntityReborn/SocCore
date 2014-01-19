@@ -82,6 +82,12 @@ public class TestEventParsing implements Listener {
     }
     
     @Test
+    public void testGetRandomUser() {
+        bot.getUser("someoneunknown").sendMsg("hi");
+        assertTrue(!TestUtils.getSent().isEmpty());
+    }
+    
+    @Test
     public void testChannelEquality() {
         assertEquals(new Channel("#test", null), new Channel("#test", null));
     }

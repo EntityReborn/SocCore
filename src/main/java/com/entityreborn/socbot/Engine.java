@@ -91,11 +91,11 @@ public abstract class Engine implements Connection {
     protected abstract void fireConnected(String server, int port, Engine e);
     
     public void connect(String srvr) throws IOException {
-        connect(srvr, 6667, "", null);
+        connect(srvr, 6667, null, null);
     }
 
     public void connect(String server, int port) throws IOException {
-        connect(server, port, "", null);
+        connect(server, port, null, null);
     }
 
     public void connect(String server, int port, String password) throws IOException {

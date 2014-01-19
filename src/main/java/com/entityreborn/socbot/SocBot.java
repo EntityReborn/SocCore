@@ -164,7 +164,7 @@ public class SocBot extends Engine implements Listener {
             u = userFactory.createUser(nick, this);
             userMap.put(nick.toLowerCase(), u);
         } else if (u == null) {
-            return null;
+            u = userFactory.createUser(nick, this);
         }
         
         if (host != null) {
