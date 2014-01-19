@@ -43,7 +43,8 @@ public abstract class Engine implements Connection {
     private OutputThread out;
     private Socket sock;
     private SocketFactory sockfactory;
-    private String nickname;
+    private String desiredNick;
+    private String actualNick;
     private String username = "SocPuppet";
     private String realname = "SocPuppet";
     private boolean isConnected = false;
@@ -147,9 +148,11 @@ public abstract class Engine implements Connection {
             sendLine("PASS " + password.trim());
         }
 
-        sendLine("NICK " + getNickname());
+        sendLine("NICK " + desiredNick);
         sendLine("USER " + getUsername() + " 8 * :" + getRealname());
-
+        
+        actualNick = desiredNick;
+        
         in.start();
 
         isConnecting = false;
@@ -189,7 +192,13 @@ public abstract class Engine implements Connection {
             // IE, if connecting to a bouncer.
             String[] args = packet.getMessage().split(" ");
             String nick = args[args.length - 1];
-            nickname = nick.split("!")[0];
+            actualNick = nick.split("!")[0];
+        } else if (packet.getCommand().equalsIgnoreCase("NICK")) {
+            String nick = Utils.getNick(packet.getSender());
+            
+            if (nick.equalsIgnoreCase(actualNick)) {
+                actualNick = packet.getMessage();
+            }
         }
         
         handlePacket(packet);
@@ -229,16 +238,20 @@ public abstract class Engine implements Connection {
     }
 
     public String getNickname() {
-        return nickname;
+        return actualNick;
     }
 
-
+    String regex = "[a-zA-Z\\\\_\\[\\]{}^`|][a-zA-Z0-9\\\\_\\-\\[\\]{}^`|]*";
     public void setNickname(String nickname) {
+        if (!nickname.matches(regex)) {
+            throw new Error("Invalid nickname.");
+        }
+        
         if (isConnected() || isConnecting()) {
             sendLine("NICK " + nickname);
         }
         
-        this.nickname = nickname;
+        this.desiredNick = nickname;
     }
 
     public String getUsername() {

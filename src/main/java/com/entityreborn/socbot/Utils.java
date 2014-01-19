@@ -57,4 +57,14 @@ public class Utils {
         
         return retn;
     }
+    
+    public static String getNick(String line) {
+        if (!line.contains("!")) {
+            return line;
+        }
+        
+        String nick = line.split("!")[0];
+        
+        return nick;
+    }
 }
