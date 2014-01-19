@@ -95,7 +95,7 @@ public abstract class Target {
 
     public void sendMsg(String... message) {
         for (String msg : message) {
-            if (msg == null) {
+            if (msg == null || msg.trim().isEmpty()) {
                 continue;
             }
             
@@ -109,7 +109,7 @@ public abstract class Target {
 
     public void sendCTCP(String type, String... message) {
         for (String msg : message) {
-            if (msg == null) {
+            if (msg == null || msg.trim().isEmpty()) {
                 continue;
             }
             
@@ -123,7 +123,7 @@ public abstract class Target {
 
     public void sendNotice(String... message) {
         for (String msg : message) {
-            if (msg == null) {
+            if (msg == null || msg.trim().isEmpty()) {
                 continue;
             }
             
@@ -137,7 +137,7 @@ public abstract class Target {
 
     public void sendCTCPReply(String type, String... message) {
         for (String msg : message) {
-            if (msg == null) {
+            if (msg == null || msg.trim().isEmpty()) {
                 continue;
             }
             
