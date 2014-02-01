@@ -23,21 +23,18 @@
  */
 package com.entityreborn.socbot.events;
 
-import com.entityreborn.socbot.events.PacketReceivedEvent;
-import com.entityreborn.socbot.events.AbstractPacketEvent;
-import com.entityreborn.socbot.events.WelcomeEvent;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import com.entityreborn.socbot.Numerics.BuiltinNumeric;
 import com.entityreborn.socbot.Packet;
 import com.entityreborn.socbot.SocBot;
 import com.entityreborn.socbot.eventsystem.EventHandler;
 import com.entityreborn.socbot.eventsystem.EventManager;
 import com.entityreborn.socbot.eventsystem.Listener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 /**
  *

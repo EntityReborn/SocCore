@@ -23,16 +23,16 @@
  */
 package com.entityreborn.socbot.events;
 
+import com.entityreborn.socbot.SocBot;
+import com.entityreborn.socbot.events.TestUtils.Config;
+import com.entityreborn.socbot.eventsystem.Listener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.InetAddress;
 import java.util.List;
-import com.entityreborn.socbot.events.TestUtils.Config;
-import com.entityreborn.socbot.SocBot;
-import com.entityreborn.socbot.eventsystem.Listener;
+import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *

@@ -1,16 +1,10 @@
 package com.entityreborn.socbot.eventsystem;
 
-import com.entityreborn.socbot.eventsystem.HandlerList;
-import com.entityreborn.socbot.eventsystem.Order;
-import com.entityreborn.socbot.eventsystem.Event;
-import com.entityreborn.socbot.eventsystem.EventManager;
-import com.entityreborn.socbot.eventsystem.EventExecutor;
-import com.entityreborn.socbot.eventsystem.EventException;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import org.testng.annotations.Test;
 
 /**
  *

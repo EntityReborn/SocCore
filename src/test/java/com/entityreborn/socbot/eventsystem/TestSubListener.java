@@ -1,8 +1,5 @@
 package com.entityreborn.socbot.eventsystem;
 
-import com.entityreborn.socbot.eventsystem.EventHandler;
-import com.entityreborn.socbot.eventsystem.Listener;
-
 /**
  * Test listener for parent-child handler lists
  */

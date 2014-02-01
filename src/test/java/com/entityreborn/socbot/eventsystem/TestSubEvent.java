@@ -1,7 +1,5 @@
 package com.entityreborn.socbot.eventsystem;
 
-import com.entityreborn.socbot.eventsystem.HandlerList;
-
 /**
  * Event created to test child handler lists
  */

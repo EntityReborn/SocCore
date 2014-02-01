@@ -23,13 +23,13 @@
  */
 package com.entityreborn.socbot.events;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import com.entityreborn.socbot.Channel;
 import com.entityreborn.socbot.Packet;
 import com.entityreborn.socbot.User;
 import com.entityreborn.socbot.eventsystem.HandlerList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

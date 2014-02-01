@@ -23,6 +23,7 @@
  */
 package com.entityreborn.socbot.events;
 
+import com.entityreborn.socbot.SocBot;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.InetAddress;
@@ -30,8 +31,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.SocketFactory;
-import com.entityreborn.socbot.SocBot;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  *
