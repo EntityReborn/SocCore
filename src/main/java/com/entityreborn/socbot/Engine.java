@@ -66,6 +66,7 @@ public abstract class Engine implements Connection {
         }
         
         isConnected = false;
+        isConnecting = false;
 
         try {
             if (in != null) in.interrupt();
@@ -199,6 +200,8 @@ public abstract class Engine implements Connection {
             if (nick.equalsIgnoreCase(actualNick)) {
                 actualNick = packet.getMessage();
             }
+        } else if (packet.getCommand().equalsIgnoreCase("ERROR")) {
+            isConnected = false;
         }
         
         handlePacket(packet);
