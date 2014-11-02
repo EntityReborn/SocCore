@@ -43,6 +43,7 @@ public class OutputThread extends Thread {
     public OutputThread(OutputStream o, Engine e) {
         out = new BufferedWriter(new OutputStreamWriter(o));
         engine = e;
+        setDaemon(true);
     }
 
     public synchronized void send(String line) {

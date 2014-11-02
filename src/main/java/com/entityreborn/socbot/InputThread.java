@@ -41,6 +41,7 @@ public class InputThread extends Thread {
     public InputThread(InputStream i, Engine c) {
         in = new BufferedReader(new InputStreamReader(i));
         engine = c;
+        setDaemon(true);
     }
 
     @Override
