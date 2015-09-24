@@ -39,7 +39,7 @@ public class EventManager {
                 try {
                     if (!event.isCancelled() || listener.getOrder().ignoresCancelled()) {
                         Object ownr = listener.getOwner();
-                        if (owner == null || ownr == owner) {
+                        if (owner == null || ownr == null || ownr == owner) {
                             listener.getExecutor().execute(event);
                         }
                     }
@@ -136,6 +136,17 @@ public class EventManager {
                 continue;
             }
             getEventListeners(delegatedClass).registerAll(entry.getValue());
+        }
+    }
+    
+    public static void unregisterEvents(Listener listener, Object owner) {
+        for (Map.Entry<Class<? extends Event>, Set<ListenerRegistration>> entry : createRegisteredListeners(listener, owner).entrySet()) {
+            Class<? extends Event> delegatedClass = getRegistrationClass(entry.getKey());
+            if (!entry.getKey().equals(delegatedClass)) {
+                LOGGER.severe("Plugin attempted to unregister delegated event class " + entry.getKey() + ". It should be using " + delegatedClass + "!");
+                continue;
+            }
+            getEventListeners(delegatedClass).unregisterAll(entry.getValue());
         }
     }
 }
